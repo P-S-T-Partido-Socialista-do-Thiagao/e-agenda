@@ -1,5 +1,7 @@
-﻿using EAgenda.Dominio.ModuloCompromisso;
+﻿using EAgenda.Dominio.ModuloCategoria;
+using EAgenda.Dominio.ModuloCompromisso;
 using EAgenda.Dominio.ModuloContato;
+using EAgenda.Dominio.ModuloDespesa;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using static System.Net.Mime.MediaTypeNames;
@@ -13,10 +15,14 @@ namespace EAgenda.Infraestrutura.Compartilhado
 
         public List<Contato> Contatos { get; set; }
         public List<Compromisso> Compromissos { get; set; }
+        public List<Categoria> Categorias { get; set; }
+        public List<Despesa> Despesas { get; set; }
         public ContextoDados()
         {
             Contatos = new List<Contato>();
             Compromissos = new List<Compromisso>();
+            Categorias = new List<Categoria>();
+            Despesas = new List<Despesa>();
         }
 
         public ContextoDados(bool carregarDados) : this()
@@ -63,6 +69,8 @@ namespace EAgenda.Infraestrutura.Compartilhado
 
             Contatos = contextoArmazenado.Contatos;
             Compromissos = contextoArmazenado.Compromissos;
+            Categorias = contextoArmazenado.Categorias;
+            Despesas = contextoArmazenado.Despesas;
         }
     }
 }
