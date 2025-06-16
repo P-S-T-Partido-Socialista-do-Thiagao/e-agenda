@@ -1,4 +1,5 @@
 ﻿using EAgenda.Dominio.Compartilhado;
+using EAgenda.Dominio.ModuloCompromisso;
 
 namespace EAgenda.Dominio.ModuloContato
 {
@@ -9,6 +10,7 @@ namespace EAgenda.Dominio.ModuloContato
         public string Telefone { get; set; }
         public string Empresa { get; set; }
         public string Cargo { get; set; }
+        public List<Compromisso> Compromissos { get; set; }
         public Contato()
         {
         }
@@ -19,6 +21,7 @@ namespace EAgenda.Dominio.ModuloContato
             Telefone = telefone;
             Empresa = empresa;
             Cargo = cargo;
+            Compromissos = new List<Compromisso>();
         }
     
         public override void AtualizarRegistro(Contato registroEditado)
