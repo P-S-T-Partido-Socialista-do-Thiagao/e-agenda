@@ -1,0 +1,21 @@
+﻿namespace EAgenda.Dominio.ModuloTarefa
+{
+    public class ItensTarefa
+    {
+        public Guid Id { get; set; }
+        public string Titulo { get; set; }
+        public string Status { get; set; }
+        public Tarefa Tarefa { get; set; }
+
+        public ItensTarefa() { }
+
+        public ItensTarefa(string titulo, string status, Tarefa tarefa)
+        {
+            Id = Guid.NewGuid();
+            Titulo = titulo;
+            Status = status;
+            Tarefa = tarefa;
+        }
+
+    }
+}
