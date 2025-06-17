@@ -6,6 +6,12 @@ namespace EAgenda.WebApp.Extensions;
 
 public static class CategoriaExtensions
 {
+    public static Categoria ParaEntidade(this FormularioCategoriaViewModel formularioVM)
+    {
+        return new Categoria(formularioVM.Titulo, formularioVM.Despesas);
+    }
+
+
     public static DetalhesCategoriaViewModel ParaDetalhesVM(this Categoria categoria)
     {
         return new DetalhesCategoriaViewModel

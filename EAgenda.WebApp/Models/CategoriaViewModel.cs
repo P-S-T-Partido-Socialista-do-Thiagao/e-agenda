@@ -60,6 +60,8 @@ public class VisualizarCategoriaViewModel
         foreach (Categoria c in categorias)
             Registros.Add(c.ParaDetalhesVM());
     }
+}
+
 
     public class DetalhesCategoriaViewModel
     {
@@ -86,4 +88,3 @@ public class VisualizarCategoriaViewModel
             Titulo = titulo;
         }
     }
-}
