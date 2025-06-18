@@ -38,11 +38,12 @@ namespace EAgenda.WebApp.Models
 
     public class EditarTarefaViewModel : FormularioTarefaViewModel
     {
+        private Tarefa tarefa;
+
         [Required(ErrorMessage = "O campo \"Id\" é obrigatório.")]
         public Guid Id { get; set; }
 
         public EditarTarefaViewModel() { }
-
         public EditarTarefaViewModel(Guid id, string titulo, string prioridade, DateTime dataCriacao, DateTime dataConclusao, float percentualConcluido)
         {
             Id = id;
@@ -94,11 +95,11 @@ namespace EAgenda.WebApp.Models
         public DateTime DataCriacao { get; set; }
         public DateTime DataConclusao { get; set; }
         public float PercentualConcluido { get; set; }
-        public List<string> Itens { get; set; } = new List<string>();
+        public List<ItensTarefa> Itens { get; set; } = new List<ItensTarefa>();
 
         public DetalhesTarefaViewModel() { }
 
-        public DetalhesTarefaViewModel(Guid id, string titulo, string prioridade, DateTime dataCriacao, DateTime dataConclusao, float percentualConcluido, List<string> itens)
+        public DetalhesTarefaViewModel(Guid id, string titulo, string prioridade, DateTime dataCriacao, DateTime dataConclusao, float percentualConcluido, List<ItensTarefa> itens)
         {
             Id = id;
             Titulo = titulo;
@@ -106,7 +107,7 @@ namespace EAgenda.WebApp.Models
             DataCriacao = dataCriacao;
             DataConclusao = dataConclusao;
             PercentualConcluido = percentualConcluido;
-            Itens = itens ?? new List<string>();
+            Itens = itens ?? new List<ItensTarefa>();
         }
     }
 
