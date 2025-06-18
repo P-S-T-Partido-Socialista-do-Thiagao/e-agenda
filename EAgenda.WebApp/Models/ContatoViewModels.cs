@@ -93,6 +93,15 @@ namespace EAgenda.WebApp.Models
 
         public DetalhesContatoViewModel() { }
 
+        public DetalhesContatoViewModel(Guid id, string nome, string email, string telefone, string cargo, string empresa)
+        {
+            Id = id;
+            Nome = nome;
+            Email = email;
+            Telefone = telefone;
+            Cargo = cargo;
+            Empresa = empresa;
+        }
         public DetalhesContatoViewModel(Guid id, string nome, string email, string telefone, string cargo, string empresa, List<string> compromissos)
         {
             Id = id;
