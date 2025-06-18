@@ -7,6 +7,7 @@ using EAgenda.WebApp.Extensions;
 
 namespace EAgenda.WebApp.Controllers;
 
+[Route("contatos")]
 public class ContatoController : Controller
 {
     private readonly ContextoDados contextoDados;
