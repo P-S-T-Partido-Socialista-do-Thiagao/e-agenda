@@ -125,6 +125,18 @@ namespace EAgenda.WebApp.Models
             Link = link;
             NomeContato = nomeContato;
         }
+
+        public DetalhesCompromissoViewModel(Guid id, string assunto, DateTime dataDeOcorrencia, TimeSpan horaDeInicio, TimeSpan horaDeTermino, string tipoCompromisso, string? local, string? link)
+        {
+            Id = id;
+            Assunto = assunto;
+            DataDeOcorrencia = dataDeOcorrencia;
+            HoraDeInicio = horaDeInicio;
+            HoraDeTermino = horaDeTermino;
+            TipoCompromisso = tipoCompromisso;
+            Local = local;
+            Link = link;
+        }
     }
 
     public class SelecionarCompromissoViewModel
