@@ -22,7 +22,7 @@ namespace EAgenda.WebApp.Models
         public decimal Valor { get; set; }
         public string? FormaPagamento { get; set; }
         public List<string>? Categorias { get; set; }
-        public DateTime? DataCadastro { get; set; }
+        public DateTime DataCadastro { get; set; }
     }
 
     public class CadastrarDespesaViewModel : FormularioDespesaViewModel
@@ -38,6 +38,7 @@ namespace EAgenda.WebApp.Models
             Categorias = categorias;
             DataCadastro = dataCadastro;
         }
+
     }
 
     public class EditarDespesaViewModel : FormularioDespesaViewModel
