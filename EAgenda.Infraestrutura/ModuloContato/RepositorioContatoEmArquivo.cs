@@ -11,7 +11,7 @@ namespace EAgenda.Infraestrutura.ModuloContato
         }
         protected override List<Contato> ObterRegistros()
         {
-            throw new NotImplementedException();
+            return contexto.Contatos;
         }
     }
 }
