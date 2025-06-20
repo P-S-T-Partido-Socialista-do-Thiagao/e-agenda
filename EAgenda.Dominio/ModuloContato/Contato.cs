@@ -16,6 +16,7 @@ namespace EAgenda.Dominio.ModuloContato
         }
         public Contato(string nome, string email, string telefone, string empresa, string cargo) : this()
         {
+            Id = Guid.NewGuid();
             Nome = nome;
             Email = email;
             Telefone = telefone;

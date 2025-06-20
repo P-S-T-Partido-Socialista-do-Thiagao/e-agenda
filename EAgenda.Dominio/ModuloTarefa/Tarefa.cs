@@ -18,6 +18,7 @@ namespace EAgenda.Dominio.ModuloTarefa
 
         public Tarefa(string titulo, string prioridade, DateTime dataCriacao, DateTime dataConclusao, float percentualConcluido)
         {
+            Id = Guid.NewGuid();
             Titulo = titulo;
             Prioridade = prioridade;
             DataCriacao = dataCriacao;

@@ -12,13 +12,14 @@ namespace EAgenda.Dominio.ModuloCategoria
 
         public Categoria(string titulo, List<Despesa> despesas)
         {
+            Id = Guid.NewGuid();
             Titulo = titulo;
             Despesas = despesas;
         }
 
         public override void AtualizarRegistro(Categoria registroEditado)
         {
-            throw new NotImplementedException();
+            Titulo = registroEditado.Titulo;
         }
     }
 }

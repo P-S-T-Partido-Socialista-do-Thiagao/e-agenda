@@ -11,9 +11,7 @@ namespace EAgenda.Infraestrutura.ModuloCategoria
         }
         protected override List<Categoria> ObterRegistros()
         {
-            throw new NotImplementedException();
+           return contexto.Categorias;
         }
     }
-    
-    
 }

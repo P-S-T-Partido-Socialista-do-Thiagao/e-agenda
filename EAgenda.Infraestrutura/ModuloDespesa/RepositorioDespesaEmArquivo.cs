@@ -12,6 +12,6 @@ public class RepositorioDespesaEmArquivo : RepositorioBaseEmArquivo<Despesa>, IR
     }
     protected override List<Despesa> ObterRegistros()
     {
-        throw new NotImplementedException();
+        return contexto.Despesas;
     }
 }

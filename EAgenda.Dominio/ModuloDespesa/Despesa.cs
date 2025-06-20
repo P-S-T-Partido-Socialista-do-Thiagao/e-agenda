@@ -13,6 +13,7 @@ namespace EAgenda.Dominio.ModuloDespesa
         
         public Despesa (string descricao, DateTime dataOcorrencia, decimal valor, string formaPagamento, List<string> categorias, DateTime dataCadastro)
         {
+            Id = Guid.NewGuid();
             Descricao = descricao;
             DataOcorrencia = dataOcorrencia;
             Valor = valor;
