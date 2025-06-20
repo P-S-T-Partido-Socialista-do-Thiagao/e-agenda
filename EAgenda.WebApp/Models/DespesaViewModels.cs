@@ -14,11 +14,11 @@ namespace EAgenda.WebApp.Models
         public string Descricao { get; set; }
 
         [Required(ErrorMessage = "O campo \"Data De Ocorrencia\" é obrigatório.")]
-        [RegularExpression(".+\\@.+\\..+", ErrorMessage = "Informe uma Data válida.")]
+        [DisplayFormat(DataFormatString = "mm/dd/yyyy")]
         public DateTime DataOcorrencia { get; set; }
 
         [Required(ErrorMessage = "O campo \"Valor\" é obrigatório.")]
-        [RegularExpression(@"^\(\d{2}\) \d{4,5}-\d{4}$", ErrorMessage = "Informe um Valor válido.")]
+        [DisplayFormat(DataFormatString = "{0,c}")]
         public decimal Valor { get; set; }
         public string? FormaPagamento { get; set; }
         public List<string>? Categorias { get; set; }

@@ -20,7 +20,10 @@ namespace EAgenda.WebApp.Controllers
         }
         public IActionResult Index()
         {
-            return View();
+            var registros = repositorioDespesa.SelecionarRegistros();
+            var visualizarVM = new VisualizarDespesaViewModel(registros);
+
+            return View(visualizarVM);
         }
 
         [HttpGet("cadastrar")]
