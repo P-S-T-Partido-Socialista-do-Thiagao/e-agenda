@@ -14,7 +14,7 @@
 
                     <h2 class="card-title text-center mb-4">CONTATOS</h2>
 
-                    <form asp-action="Cadastrar">
+                    <form asp-controller="Contato" asp-action="Cadastrar" method="post">
 
                         <div class="row">
                             <div class="col-md-6">
@@ -52,7 +52,7 @@
                         </div>
 
                         <div class="mt-4 d-flex justify-content-end gap-2">
-                            <a href="/contatos" asp-action="Index" class="btn btn-outline-secondary">Visualizar</a>
+                            <a href="/contatos" class="btn btn-outline-secondary">Visualizar</a>
                             <button type="submit" class="btn btn-primary">Cadastrar</button>
                         </div>
                     </form>

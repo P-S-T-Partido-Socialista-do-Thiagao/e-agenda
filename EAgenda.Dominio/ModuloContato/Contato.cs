@@ -26,7 +26,11 @@ namespace EAgenda.Dominio.ModuloContato
     
         public override void AtualizarRegistro(Contato registroEditado)
         {
-            throw new NotImplementedException();
+            Nome = registroEditado.Nome;
+            Email = registroEditado.Email;
+            Telefone = registroEditado.Telefone;
+            Empresa = registroEditado.Empresa;
+            Cargo = registroEditado.Cargo;
         }
     }
 }

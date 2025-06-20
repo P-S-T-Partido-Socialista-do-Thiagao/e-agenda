@@ -37,7 +37,6 @@ public class ContatoController : Controller
     }
 
     [HttpPost("cadastrar")]
-    [ValidateAntiForgeryToken]
     public IActionResult Cadastrar(CadastrarContatoViewModel cadastrarVM)
     {
         var registros = repositorioContato.SelecionarRegistros();

@@ -26,7 +26,7 @@ namespace EAgenda.WebApp.Models
     {
         public CadastrarContatoViewModel() { }
 
-        public CadastrarContatoViewModel(string nome, string email, string telefone, string cargo, string empresa)
+        public CadastrarContatoViewModel(string nome, string email, string telefone, string cargo, string empresa) : this()
         {
             Nome = nome;
             Email = email;
