@@ -13,14 +13,15 @@ namespace EAgenda.WebApp.Extensions
 
         public static DetalhesTarefaViewModel ParaDetalhesVM(this Tarefa tarefa)
         {
-           return new DetalhesTarefaViewModel
+            return new DetalhesTarefaViewModel
             {
+                Id = tarefa.Id,
                 Titulo = tarefa.Titulo,
                 Prioridade = tarefa.Prioridade,
                 DataCriacao = tarefa.DataCriacao,
                 DataConclusao = tarefa.DataConclusao,
-                PercentualConcluido = tarefa.PercentualConcluido,
-           };
+                PercentualConcluido = tarefa.PercentualConcluido
+            };
         }
     }
 }
