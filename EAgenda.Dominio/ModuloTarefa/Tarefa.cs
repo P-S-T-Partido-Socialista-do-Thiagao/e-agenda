@@ -27,7 +27,10 @@ namespace EAgenda.Dominio.ModuloTarefa
         }
         public override void AtualizarRegistro(Tarefa registroEditado)
         {
-            throw new NotImplementedException();
+            Titulo = registroEditado.Titulo;
+            Prioridade = registroEditado.Prioridade;
+            DataCriacao = registroEditado.DataCriacao;
+            DataConclusao = registroEditado.DataConclusao;
         }
     }
 }

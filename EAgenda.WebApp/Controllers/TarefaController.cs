@@ -1,4 +1,5 @@
-﻿using EAgenda.Dominio.ModuloTarefa;
+﻿using EAgenda.Dominio.ModuloContato;
+using EAgenda.Dominio.ModuloTarefa;
 using EAgenda.Infraestrutura.Compartilhado;
 using EAgenda.Infraestrutura.ModuloTarefa;
 using EAgenda.WebApp.Extensions;
@@ -20,13 +21,18 @@ namespace EAgenda.WebApp.Controllers
         }
         public IActionResult Index()
         {
-            return View();
+            var registros = repositorioTarefa.SelecionarRegistros();
+
+            var visualizarVM = new VisualizarTarefaViewModel(registros);
+
+            return View(visualizarVM);
         }
 
         [HttpGet("cadastrar")]
         public IActionResult Cadastrar()
         {
             var cadastrarVM = new CadastrarTarefaViewModel();
+
             return View(cadastrarVM);
         }
 
@@ -37,6 +43,8 @@ namespace EAgenda.WebApp.Controllers
             var registros = repositorioTarefa.SelecionarRegistros();
 
             var entidade = cadastrarVM.ParaEntidade();
+
+            repositorioTarefa.CadastrarRegistro(entidade);
 
             return RedirectToAction(nameof(Index));
         }
@@ -89,13 +97,13 @@ namespace EAgenda.WebApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpGet("visualizar/{id:guid}")]
-        public IActionResult Visualizar(Guid id)
+        [HttpGet("detalhes/{id:guid}")]
+        public IActionResult Detalhes(Guid id)
         {
             var registro = repositorioTarefa.SelecionarRegistroPorId(id);
 
             var detalhesVM = new DetalhesTarefaViewModel(
-                registro.Id,
+                id,
                 registro.Titulo,
                 registro.Prioridade,
                 registro.DataCriacao,

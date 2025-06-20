@@ -12,7 +12,7 @@ namespace EAgenda.Infraestrutura.ModuloTarefa
 
         protected override List<Tarefa> ObterRegistros()
         {
-            throw new NotImplementedException();
+            return contexto.Tarefas;
         }
     }
 }
