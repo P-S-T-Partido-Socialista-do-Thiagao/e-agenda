@@ -15,7 +15,7 @@ namespace EAgenda.WebApp.Models
 
         [Required(ErrorMessage = "O campo \"Data De Ocorrencia\" é obrigatório.")]
         [DisplayFormat(DataFormatString = "mm/dd/yyyy")]
-        public DateTime DataOcorrencia { get; set; }
+        public DateTime DataOcorrencia { get; set; } = DateTime.Now;
 
         [Required(ErrorMessage = "O campo \"Valor\" é obrigatório.")]
         [DisplayFormat(DataFormatString = "{0,c}")]
