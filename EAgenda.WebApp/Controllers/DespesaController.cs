@@ -1,5 +1,7 @@
-﻿using EAgenda.Dominio.ModuloDespesa;
+﻿using EAgenda.Dominio.ModuloCategoria;
+using EAgenda.Dominio.ModuloDespesa;
 using EAgenda.Infraestrutura.Compartilhado;
+using EAgenda.Infraestrutura.ModuloCategoria;
 using EAgenda.Infraestrutura.ModuloDespesa;
 using EAgenda.WebApp.Extensions;
 using EAgenda.WebApp.Models;
@@ -12,11 +14,13 @@ namespace EAgenda.WebApp.Controllers
     {
         private readonly ContextoDados contextoDados;
         private readonly IRepositorioDespesa repositorioDespesa;
+        private readonly IRepositorioCategoria repositorioCategoria;
 
         public DespesaController()
         {
             contextoDados = new ContextoDados(true);
             repositorioDespesa = new RepositorioDespesaEmArquivo(contextoDados);
+            repositorioCategoria = new RepositorioCategoriaEmArquivo(contextoDados);
         }
         public IActionResult Index()
         {
@@ -29,13 +33,13 @@ namespace EAgenda.WebApp.Controllers
         [HttpGet("cadastrar")]
         public IActionResult Cadastrar()
         {
-            var cadastrarVM = new CadastrarDespesaViewModel();
+            var registros = repositorioCategoria.SelecionarRegistros();
+            var cadastrarVM = new CadastrarDespesaViewModel(registros);
 
             return View(cadastrarVM);
         }
 
         [HttpPost("cadastrar")]
-        [ValidateAntiForgeryToken]
         public IActionResult Cadastrar(CadastrarDespesaViewModel cadastrarVM)
         {
             var registros = repositorioDespesa.SelecionarRegistros();
@@ -51,7 +55,9 @@ namespace EAgenda.WebApp.Controllers
             if (!ModelState.IsValid)
                 return View(cadastrarVM);
 
-            var entidade = cadastrarVM.ParaEntidade();
+            var categorias = repositorioCategoria.SelecionarRegistros();
+
+            var entidade = cadastrarVM.ParaEntidade(categorias);
 
             repositorioDespesa.CadastrarRegistro(entidade);
 
@@ -59,9 +65,9 @@ namespace EAgenda.WebApp.Controllers
         }
 
         [HttpGet("editar/{id:guid}")]
-        [ValidateAntiForgeryToken]
         public IActionResult Editar(Guid id)
         {
+            var categorias = repositorioCategoria.SelecionarRegistros();
             var registro = repositorioDespesa.SelecionarRegistroPorId(id);
 
             var editarVM = new EditarDespesaViewModel(
@@ -70,8 +76,7 @@ namespace EAgenda.WebApp.Controllers
                 registro.DataOcorrencia,
                 registro.Valor,
                 registro.FormaPagamento,
-                registro.Categorias,
-                registro.DataCadastro
+                registro.Categorias
                 );
 
             return View(editarVM);
@@ -93,7 +98,9 @@ namespace EAgenda.WebApp.Controllers
             if (!ModelState.IsValid)
                 return View(editarVM);
 
-            var entidade = editarVM.ParaEntidade();
+            var categorias = repositorioCategoria.SelecionarRegistros();
+
+            var entidade = editarVM.ParaEntidade(categorias);
 
             repositorioDespesa.EditarRegistro(id, entidade);
 
@@ -121,14 +128,19 @@ namespace EAgenda.WebApp.Controllers
         {
             var registro = repositorioDespesa.SelecionarRegistroPorId(id);
 
+            var titulosCategorias = new List<string>();
+            foreach (var categoria in registro.Categorias)
+            {
+                titulosCategorias.Add(categoria.Titulo);
+            }
+
             var detalhesVM = new DetalhesDespesaViewModel(
                 registro.Id,
                 registro.Descricao,
                 registro.DataOcorrencia,
                 registro.Valor,
                 registro.FormaPagamento,
-                registro.Categorias,
-                registro.DataCadastro
+                titulosCategorias
             );
 
             return View(detalhesVM);

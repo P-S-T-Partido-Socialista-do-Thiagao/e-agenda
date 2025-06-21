@@ -1,8 +1,8 @@
 ﻿using EAgenda.Dominio.ModuloCategoria;
 using EAgenda.Dominio.ModuloDespesa;
 using EAgenda.WebApp.Extensions;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
-using System.Drawing;
 
 namespace EAgenda.WebApp.Models
 {
@@ -14,29 +14,53 @@ namespace EAgenda.WebApp.Models
         public string Descricao { get; set; }
 
         [Required(ErrorMessage = "O campo \"Data De Ocorrencia\" é obrigatório.")]
-        [DisplayFormat(DataFormatString = "mm/dd/yyyy")]
         public DateTime DataOcorrencia { get; set; } = DateTime.Now;
 
         [Required(ErrorMessage = "O campo \"Valor\" é obrigatório.")]
-        [DisplayFormat(DataFormatString = "{0,c}")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "O campo \"Valor\" deve ser maior que zero.")]
         public decimal Valor { get; set; }
         public string? FormaPagamento { get; set; }
-        public List<string>? Categorias { get; set; }
-        public DateTime DataCadastro { get; set; }
+        public List<SelectListItem>? CategoriasDisponiveis { get; set; }
+        public List<Guid>? Categorias { get; set; }
     }
 
     public class CadastrarDespesaViewModel : FormularioDespesaViewModel
     {
-        public CadastrarDespesaViewModel() { }
+        public CadastrarDespesaViewModel()
+        {
+            Categorias = new List<Guid>();
+            CategoriasDisponiveis = new List<SelectListItem>();
+        }
 
-        public CadastrarDespesaViewModel(string descricao, DateTime dataOcorrencia, decimal valor, string formaPagamento, List<string> categorias, DateTime dataCadastro)
+        public CadastrarDespesaViewModel(List<Categoria> categorias) : this()
+        {
+
+            foreach (var categoria in categorias)
+            {
+                CategoriasDisponiveis.Add(new SelectListItem
+                {
+                    Value = categoria.Id.ToString(),
+                    Text = categoria.Titulo
+                });
+            }
+        }
+
+        public CadastrarDespesaViewModel(List<Categoria> categorias, string descricao, DateTime dataOcorrencia, decimal valor, string formaPagamento)
         {
             Descricao = descricao;
             DataOcorrencia = dataOcorrencia;
             Valor = valor;
             FormaPagamento = formaPagamento;
-            Categorias = categorias;
-            DataCadastro = dataCadastro;
+
+            CategoriasDisponiveis = new List<SelectListItem>();
+            foreach (var categoria in categorias)
+            {
+                CategoriasDisponiveis.Add(new SelectListItem
+                {
+                    Value = categoria.Id.ToString(),
+                    Text = categoria.Titulo
+                });
+            }
         }
 
     }
@@ -46,15 +70,22 @@ namespace EAgenda.WebApp.Models
         [Required(ErrorMessage = "O campo \"Id\" é obrigatório.")]
         public Guid Id { get; set; }
         public EditarDespesaViewModel() { }
-        public EditarDespesaViewModel(Guid id, string descricao, DateTime dataOcorrencia, decimal valor, string formaPagamento, List<string> categorias, DateTime dataCadastro)
+        public EditarDespesaViewModel(Guid id, string descricao, DateTime dataOcorrencia, decimal valor, string formaPagamento, List<Categoria> categorias)
         {
             Id = id;
             Descricao = descricao;
             DataOcorrencia = dataOcorrencia;
             Valor = valor;
             FormaPagamento = formaPagamento;
-            Categorias = categorias;
-            DataCadastro = dataCadastro;
+            CategoriasDisponiveis = new List<SelectListItem>();
+            foreach (var categoria in categorias)
+            {
+                CategoriasDisponiveis.Add(new SelectListItem
+                {
+                    Value = categoria.Id.ToString(),
+                    Text = categoria.Titulo
+                });
+            }
         }
     }
 
@@ -99,7 +130,7 @@ namespace EAgenda.WebApp.Models
 
         public DetalhesDespesaViewModel() { }
 
-        public DetalhesDespesaViewModel(Guid id, string descricao, DateTime dataOcorrencia, decimal valor, string formaPagamento, List<string> categorias, DateTime dataCadastro)
+        public DetalhesDespesaViewModel(Guid id, string descricao, DateTime dataOcorrencia, decimal valor, string formaPagamento, List<string> categorias)
         {
             Id = id;
             Descricao = descricao;
@@ -107,7 +138,6 @@ namespace EAgenda.WebApp.Models
             Valor = valor;
             FormaPagamento = formaPagamento;
             Categorias = categorias;
-            DataCadastro = dataCadastro;
         }
     }
 

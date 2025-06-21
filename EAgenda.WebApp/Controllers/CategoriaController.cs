@@ -114,6 +114,14 @@ public class CategoriaController : Controller
     [HttpPost("excluir/{id:guid}")]
     public IActionResult ExcluirConfirmado(Guid id)
     {
+        foreach(var item in repositorioCategoria.SelecionarRegistros())
+        {
+            if (item.Despesas.Any(d => d.Id == id))
+            {
+                ModelState.AddModelError("ExclusaoImpossivel", "Não é possível excluir uma categoria que possui despesas associadas.");
+                return View(new ExcluirCategoriaViewModel(id, item.Titulo));
+            }
+        }
         repositorioCategoria.ExcluirRegistro(id);
 
         return RedirectToAction(nameof(Index));

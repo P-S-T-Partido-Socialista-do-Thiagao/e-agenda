@@ -1,4 +1,4 @@
-﻿@model CadastrarDespesaViewModel
+﻿@model EditarDespesaViewModel
 
 @{
     Layout = "_Layout";
@@ -10,8 +10,8 @@
     <div class="col-md-8">
         <div class="card rounded-4 border-0">
             <div class="card-body p-md-5">
-                <form asp-action="Cadastrar">
-                    <h3>Formulário de Cadastro</h3>
+                <form asp-action="Editar">
+                    <h3>Formulário de Edição</h3>
 
                     @if (ViewData.ModelState["CadastroUnico"]?.Errors.Count > 0)
                     {
@@ -33,8 +33,8 @@
                     </div>
                     <div class="form-group d-grid gap-2 mt-3">
                         <label asp-for="Valor" class="control-label fs-5">Valor:</label>
-                        <input asp-for="Valor" class="form-control" />
-                        <span asp-validation-for="Valor" class="text-danger" type="number" step="0.01"></span>
+                        <input asp-for="Valor" class="form-control" type="number" step="0.01"/>
+                        <span asp-validation-for="Valor" class="text-danger"></span>
                     </div>
                     <div class="form-group d-grid gap-2 mt-3">
                         <label asp-for="FormaPagamento" class="control-label fs-5">Forma de pagamento:</label>

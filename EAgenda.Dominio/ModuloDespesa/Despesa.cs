@@ -1,4 +1,5 @@
 ﻿using EAgenda.Dominio.Compartilhado;
+using EAgenda.Dominio.ModuloCategoria;
 
 namespace EAgenda.Dominio.ModuloDespesa
 {
@@ -8,10 +9,11 @@ namespace EAgenda.Dominio.ModuloDespesa
         public DateTime DataOcorrencia { get; set; }
         public decimal Valor {  get; set; }
         public string FormaPagamento {  get; set; }
-        public List<string> Categorias { get; set; }
+        public List<Categoria> Categorias { get; set; }
         public DateTime DataCadastro {  get; set; }
-        
-        public Despesa (string descricao, DateTime dataOcorrencia, decimal valor, string formaPagamento, List<string> categorias, DateTime dataCadastro)
+
+        public Despesa() { }
+        public Despesa (string descricao, DateTime dataOcorrencia, decimal valor, string formaPagamento, List<Categoria> categorias)
         {
             Id = Guid.NewGuid();
             Descricao = descricao;
@@ -19,12 +21,15 @@ namespace EAgenda.Dominio.ModuloDespesa
             Valor = valor;
             FormaPagamento = formaPagamento;
             Categorias = categorias;
-            DataCadastro = dataCadastro;
         }
 
         public override void AtualizarRegistro(Despesa registroEditado)
         {
-            throw new NotImplementedException();
+            Descricao = registroEditado.Descricao;
+            DataOcorrencia = registroEditado.DataOcorrencia;
+            Valor = registroEditado.Valor;
+            FormaPagamento = registroEditado.FormaPagamento;
+            Categorias = registroEditado.Categorias;
         }
     }
 }
