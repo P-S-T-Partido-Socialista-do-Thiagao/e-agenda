@@ -6,6 +6,7 @@ using EAgenda.Infraestrutura.ModuloDespesa;
 using EAgenda.WebApp.Extensions;
 using EAgenda.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EAgenda.WebApp.Controllers
 {
@@ -78,6 +79,13 @@ namespace EAgenda.WebApp.Controllers
                 registro.FormaPagamento,
                 registro.Categorias
                 );
+
+            editarVM.CategoriasDisponiveis = categorias.Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Titulo,
+                    Selected = registro.Categorias.Any(rc => rc.Id == c.Id)
+                }).ToList();
 
             return View(editarVM);
         }
