@@ -11,7 +11,7 @@ namespace EAgenda.Infraestrutura.ModuloCompromisso
         }
         protected override List<Compromisso> ObterRegistros()
         {
-            throw new NotImplementedException();
+            return contexto.Compromissos;
         }
     }    
     

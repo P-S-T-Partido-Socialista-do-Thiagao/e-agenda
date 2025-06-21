@@ -20,6 +20,7 @@ namespace EAgenda.Dominio.ModuloCompromisso
 
         public Compromisso(string assunto, DateTime dataDeOcorrencia, TimeSpan horaDeInicio, TimeSpan horaDeTermino, string tipoCompromisso, string local, string link, Contato contato) : this()
         {
+            Id = Guid.NewGuid();
             Assunto = assunto;
             DataDeOcorrencia = dataDeOcorrencia;
             HoraDeInicio = horaDeInicio;
@@ -31,7 +32,14 @@ namespace EAgenda.Dominio.ModuloCompromisso
         }
         public override void AtualizarRegistro(Compromisso registroEditado)
         {
-            throw new NotImplementedException();
+            Assunto = registroEditado.Assunto;
+            DataDeOcorrencia = registroEditado.DataDeOcorrencia;
+            HoraDeInicio = registroEditado.HoraDeInicio;
+            HoraDeTermino = registroEditado.HoraDeTermino;
+            TipoCompromisso = registroEditado.TipoCompromisso;
+            Local = registroEditado.Local;
+            Link = registroEditado.Link;
+            Contato = registroEditado.Contato;
         }
     }
 }

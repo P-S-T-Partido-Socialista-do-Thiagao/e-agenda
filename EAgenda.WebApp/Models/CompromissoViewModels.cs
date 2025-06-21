@@ -1,6 +1,7 @@
 ﻿using EAgenda.Dominio.ModuloCompromisso;
 using EAgenda.Dominio.ModuloContato;
 using EAgenda.WebApp.Extensions;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace EAgenda.WebApp.Models
@@ -13,7 +14,7 @@ namespace EAgenda.WebApp.Models
         public string Assunto { get; set; }
 
         [Required(ErrorMessage = "O campo \"Data de Ocorrência\" é obrigatório.")]
-        public DateTime DataDeOcorrencia { get; set; }
+        public DateTime DataDeOcorrencia { get; set; } = DateTime.Now;
 
         [Required(ErrorMessage = "O campo \"Hora de Início\" é obrigatório.")]
         public TimeSpan HoraDeInicio { get; set; }
@@ -23,16 +24,30 @@ namespace EAgenda.WebApp.Models
 
         [Required(ErrorMessage = "O campo \"Tipo de Compromisso\" é obrigatório.")]
         public string TipoCompromisso { get; set; }
-
         public string? Local { get; set; }
         public string? Link { get; set; }
-        public Contato? Contato { get; set; }
+        public List<SelectListItem>? ContatosDisponiveis { get; set; }
+        public Guid? Contato { get; set; }
     }
 
     public class CadastrarCompromissoViewModel : FormularioCompromissoViewModel
     {
-        public CadastrarCompromissoViewModel() { }
+        public CadastrarCompromissoViewModel()
+        {
+            ContatosDisponiveis = new List<SelectListItem>();
+        }
 
+        public CadastrarCompromissoViewModel(List<Contato> contatos) : this()
+        {
+            foreach (var contato in contatos)
+            {
+                ContatosDisponiveis.Add(new SelectListItem
+                {
+                    Value = contato.Id.ToString(),
+                    Text = contato.Nome
+                });
+            }
+        }
         public CadastrarCompromissoViewModel(string assunto, DateTime dataDeOcorrencia, TimeSpan horaDeInicio, TimeSpan horaDeTermino, string tipoCompromisso, string? local, string? link, Contato? contato)
         {
             Assunto = assunto;
@@ -43,6 +58,12 @@ namespace EAgenda.WebApp.Models
             Local = local;
             Link = link;
             Contato = contato;
+            ContatosDisponiveis = new List<SelectListItem>();
+            ContatosDisponiveis.Add(new SelectListItem
+            {
+                Value = contato?.Id.ToString() ?? string.Empty,
+                Text = contato?.Nome ?? "Nenhum Contato"
+            });
         }
     }
 

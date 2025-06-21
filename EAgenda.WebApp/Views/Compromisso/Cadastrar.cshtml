@@ -35,46 +35,55 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label asp-for="DataDeOcorrencia" class="form-label">DataDeOcorrencia *</label>
-                                    <input asp-for="DataDeOcorrencia" class="form-control" />
+                                    <input asp-for="DataDeOcorrencia" type="date" class="form-control" />
                                     <span asp-validation-for="DataDeOcorrencia" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="HoraDeInicio" class="form-label">HoraDeInicio *</label>
-                            <input asp-for="HoraDeInicio" class="form-control" />
-                            <span asp-validation-for="HoraDeInicio" class="text-danger"></span>
-                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="HoraDeInicio" class="form-label">HoraDeInicio: *</label>
+                                    <input asp-for="HoraDeInicio" class="form-control" />
+                                    <span asp-validation-for="HoraDeInicio" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="HoraDeTermino" class="form-label">HoraDeTermino: *</label>
+                                    <input asp-for="HoraDeTermino" class="form-control" />
+                                    <span asp-validation-for="HoraDeTermino" class="text-danger"></span>
+                                </div>
+                            </div>
 
-                        <div class="mb-3">
-                            <label asp-for="HoraDeTermino" class="form-label">HoraDeTermino *</label>
-                            <input asp-for="HoraDeTermino" class="form-control" />
-                            <span asp-validation-for="HoraDeTermino" class="text-danger"></span>
                         </div>
-
                         <div class="mb-3">
-                            <label asp-for="TipoCompromisso" class="form-label">TipoCompromisso *</label>
-                            <input asp-for="TipoCompromisso" class="form-control" />
+                            <label asp-for="TipoCompromisso" class="form-label">TipoCompromisso: *</label>
+                            <select class="form-select" asp-for="TipoCompromisso" aria-label="Selecionar tipo compromisso">
+                                <option selected></option>
+                                <option value="Remoto">Remoto</option>
+                                <option value="Presencial">Presencial</option>
+                            </select>
                             <span asp-validation-for="TipoCompromisso" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Local" class="form-label">Local</label>
+                            <label asp-for="Local" class="form-label">Local:</label>
                             <input asp-for="Local" class="form-control" />
                             <span asp-validation-for="Local" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Link" class="form-label">Link</label>
+                            <label asp-for="Link" class="form-label">Link:</label>
                             <input asp-for="Link" class="form-control" />
                             <span asp-validation-for="Link" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Contato" class="form-label">Contato</label>
-                            <input asp-for="Contato" class="form-control" />
-                            <span asp-validation-for="Contato" class="text-danger"></span>
+                            <label asp-for="Contato" class="form-label">Contato:</label>
+                            <select class="form-select" asp-for="Contato" asp-items="Model.ContatosDisponiveis" aria-label="Selecionar contato">
+                            </select>
                         </div>
 
                         <div class="mt-4 d-flex justify-content-end gap-2">

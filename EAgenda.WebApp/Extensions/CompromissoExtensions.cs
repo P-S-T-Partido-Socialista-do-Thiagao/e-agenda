@@ -1,15 +1,29 @@
 ﻿using EAgenda.Dominio.ModuloCategoria;
 using EAgenda.Dominio.ModuloCompromisso;
+using EAgenda.Dominio.ModuloContato;
 using EAgenda.WebApp.Models;
 
 namespace EAgenda.WebApp.Extensions
 {
     public static class CompromissoExtensions
     {
-        public static Compromisso ParaEntidade(this FormularioCompromissoViewModel formularioVM)
+        public static Compromisso ParaEntidade(this FormularioCompromissoViewModel formularioVM, List<Contato> contatosDisponiveis)
         {
+            var contato = contatosDisponiveis.FirstOrDefault(c => c.Id == formularioVM.Contato?.Id);
+
+            /*
+            foreach (var contato in contatosDisponiveis)
+            {
+                if (formularioVM.Contato != null && formularioVM.Contato.Id == contato.Id)
+                {
+                    formularioVM.Contato = contato;
+                    break;
+                }
+            }
+            */
+
             return new Compromisso(formularioVM.Assunto, formularioVM.DataDeOcorrencia, formularioVM.HoraDeInicio, formularioVM.HoraDeTermino, formularioVM.TipoCompromisso,
-                formularioVM.Local, formularioVM.Link, formularioVM.Contato);
+                formularioVM.Local, formularioVM.Link, contato);
         }
 
         public static DetalhesCompromissoViewModel ParaDetalhesVM(this Compromisso compromisso)
@@ -24,7 +38,7 @@ namespace EAgenda.WebApp.Extensions
                 TipoCompromisso = compromisso.TipoCompromisso,
                 Local = compromisso.Local,
                 Link = compromisso.Link,
-                NomeContato = compromisso.Contato.Nome
+                NomeContato = compromisso.Contato?.Nome
             };
         }
     }
