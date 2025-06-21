@@ -9,18 +9,7 @@ namespace EAgenda.WebApp.Extensions
     {
         public static Compromisso ParaEntidade(this FormularioCompromissoViewModel formularioVM, List<Contato> contatosDisponiveis)
         {
-            var contato = contatosDisponiveis.FirstOrDefault(c => c.Id == formularioVM.Contato?.Id);
-
-            /*
-            foreach (var contato in contatosDisponiveis)
-            {
-                if (formularioVM.Contato != null && formularioVM.Contato.Id == contato.Id)
-                {
-                    formularioVM.Contato = contato;
-                    break;
-                }
-            }
-            */
+            var contato = contatosDisponiveis.FirstOrDefault(c => c.Id == formularioVM.Contato);
 
             return new Compromisso(formularioVM.Assunto, formularioVM.DataDeOcorrencia, formularioVM.HoraDeInicio, formularioVM.HoraDeTermino, formularioVM.TipoCompromisso,
                 formularioVM.Local, formularioVM.Link, contato);

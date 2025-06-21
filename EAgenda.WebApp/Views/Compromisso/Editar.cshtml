@@ -74,9 +74,9 @@
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Contato" class="form-label">Contato</label>
-                            <input asp-for="Contato" class="form-control" />
-                            <span asp-validation-for="Contato" class="text-danger"></span>
+                            <label asp-for="Contato" class="form-label">Contato:</label>
+                            <select class="form-select" asp-for="Contato" asp-items="Model.ContatosDisponiveis" aria-label="Selecionar contato">
+                            </select>
                         </div>
 
                         <div class="mt-4 d-flex justify-content-end gap-2">

@@ -48,7 +48,7 @@ namespace EAgenda.WebApp.Models
                 });
             }
         }
-        public CadastrarCompromissoViewModel(string assunto, DateTime dataDeOcorrencia, TimeSpan horaDeInicio, TimeSpan horaDeTermino, string tipoCompromisso, string? local, string? link, Contato? contato)
+        public CadastrarCompromissoViewModel(string assunto, DateTime dataDeOcorrencia, TimeSpan horaDeInicio, TimeSpan horaDeTermino, string tipoCompromisso, string? local, string? link, Guid? contato)
         {
             Assunto = assunto;
             DataDeOcorrencia = dataDeOcorrencia;
@@ -59,11 +59,6 @@ namespace EAgenda.WebApp.Models
             Link = link;
             Contato = contato;
             ContatosDisponiveis = new List<SelectListItem>();
-            ContatosDisponiveis.Add(new SelectListItem
-            {
-                Value = contato?.Id.ToString() ?? string.Empty,
-                Text = contato?.Nome ?? "Nenhum Contato"
-            });
         }
     }
 
@@ -74,7 +69,7 @@ namespace EAgenda.WebApp.Models
 
         public EditarCompromissoViewModel() { }
 
-        public EditarCompromissoViewModel(Guid id, string assunto, DateTime dataDeOcorrencia, TimeSpan horaDeInicio, TimeSpan horaDeTermino, string tipoCompromisso, string? local, string? link, Contato? contato)
+        public EditarCompromissoViewModel(Guid id, string assunto, DateTime dataDeOcorrencia, TimeSpan horaDeInicio, TimeSpan horaDeTermino, string tipoCompromisso, string? local, string? link, Guid? contato)
         {
             Id = id;
             Assunto = assunto;

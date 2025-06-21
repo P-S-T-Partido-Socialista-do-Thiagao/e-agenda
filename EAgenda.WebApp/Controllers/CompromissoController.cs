@@ -100,7 +100,7 @@ public class CompromissoController : Controller
             registroSelecionado.TipoCompromisso,
             registroSelecionado.Local, 
             registroSelecionado.Link, 
-            registroSelecionado.Contato
+            registroSelecionado.Contato.Id
         );
 
         editarVM.ContatosDisponiveis = contatos.Select(c => new SelectListItem
@@ -163,6 +163,8 @@ public class CompromissoController : Controller
     {
         var registroSelecionado = repositorioCompromisso.SelecionarRegistroPorId(id);
 
+        var NomeContato = repositorioContato.SelecionarRegistroPorId(registroSelecionado.Contato.Id)?.Nome;
+
         var detalhesVM = new DetalhesCompromissoViewModel(
             id,
             registroSelecionado.Assunto,
@@ -171,7 +173,8 @@ public class CompromissoController : Controller
             registroSelecionado.HoraDeTermino,
             registroSelecionado.TipoCompromisso,
             registroSelecionado.Local,
-            registroSelecionado.Link
+            registroSelecionado.Link,
+            NomeContato
             );
 
         return View(detalhesVM);
