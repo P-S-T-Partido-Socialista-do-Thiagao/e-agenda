@@ -1,5 +1,5 @@
 ﻿using EAgenda.Dominio.Compartilhado;
-
+using EAgenda.Dominio.ModuloItensTarefa;
 namespace EAgenda.Dominio.ModuloTarefa
 {
     public class Tarefa : EntidadeBase<Tarefa>
