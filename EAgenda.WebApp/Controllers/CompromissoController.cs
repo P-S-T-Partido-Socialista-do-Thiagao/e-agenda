@@ -1,9 +1,12 @@
 ﻿using EAgenda.Dominio.ModuloCompromisso;
+using EAgenda.Dominio.ModuloContato;
 using EAgenda.Infraestrutura.Compartilhado;
 using EAgenda.Infraestrutura.ModuloCompromisso;
+using EAgenda.Infraestrutura.ModuloContato;
 using EAgenda.WebApp.Extensions;
 using EAgenda.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EAgenda.WebApp.Controllers;
 
@@ -12,11 +15,13 @@ public class CompromissoController : Controller
 {
     private readonly ContextoDados contextoDados;
     private readonly IRepositorioCompromisso repositorioCompromisso;
+    private readonly IRepositorioContato repositorioContato;
 
     public CompromissoController()
     {
         contextoDados = new ContextoDados(true);
         repositorioCompromisso = new RepositorioCompromissoEmArquivo(contextoDados);
+        repositorioContato = new RepositorioContatoEmArquivo(contextoDados);
     }
 
     public IActionResult Index()
@@ -31,7 +36,8 @@ public class CompromissoController : Controller
     [HttpGet("cadastrar")]
     public IActionResult Cadastrar()
     {
-        var cadastrarVM = new CadastrarCompromissoViewModel();
+        var contatos = repositorioContato.SelecionarRegistros();
+        var cadastrarVM = new CadastrarCompromissoViewModel(contatos);
 
         return View(cadastrarVM);
     }
@@ -51,10 +57,27 @@ public class CompromissoController : Controller
             }
         }
 
+        if (cadastrarVM.TipoCompromisso.Equals("Remoto"))
+        {
+            if(cadastrarVM.Link == null)
+            {
+                ModelState.AddModelError("CadastroUnico", "É necessário fornecer um link caso o compromisso seja remoto");
+            }
+        }
+        else if (cadastrarVM.TipoCompromisso.Equals("Presencial"))
+        {
+            if(cadastrarVM.Local == null)
+            {
+                ModelState.AddModelError("CadastroUnico", "É necessário fornecer um local caso o compromisso seja presencial");
+            }
+        }
+
         if (!ModelState.IsValid)
             return View(cadastrarVM);
 
-        var entidade = cadastrarVM.ParaEntidade();
+        var contatosDisponiveis = repositorioContato.SelecionarRegistros();
+
+        var entidade = cadastrarVM.ParaEntidade(contatosDisponiveis);
 
         repositorioCompromisso.CadastrarRegistro(entidade);
 
@@ -65,6 +88,7 @@ public class CompromissoController : Controller
     [HttpGet("editar/{id:guid}")]
     public ActionResult Editar(Guid id)
     {
+        var contatos = repositorioContato.SelecionarRegistros();
         var registroSelecionado = repositorioCompromisso.SelecionarRegistroPorId(id);
 
         var editarVM = new EditarCompromissoViewModel(
@@ -76,8 +100,15 @@ public class CompromissoController : Controller
             registroSelecionado.TipoCompromisso,
             registroSelecionado.Local, 
             registroSelecionado.Link, 
-            registroSelecionado.Contato
+            registroSelecionado.Contato.Id
         );
+
+        editarVM.ContatosDisponiveis = contatos.Select(c => new SelectListItem
+        {
+            Value = c.Id.ToString(),
+            Text = c.Nome,
+            Selected = registroSelecionado.Contato != null && c.Id == registroSelecionado.Contato.Id
+        }).ToList();
 
         return View(editarVM);
     }
@@ -100,7 +131,9 @@ public class CompromissoController : Controller
         if (!ModelState.IsValid)
             return View(editarVM);
 
-        var entidadeEditada = editarVM.ParaEntidade();
+        var contatosDisponiveis = repositorioContato.SelecionarRegistros();
+
+        var entidadeEditada = editarVM.ParaEntidade(contatosDisponiveis);
 
         repositorioCompromisso.EditarRegistro(id, entidadeEditada);
 
@@ -130,6 +163,8 @@ public class CompromissoController : Controller
     {
         var registroSelecionado = repositorioCompromisso.SelecionarRegistroPorId(id);
 
+        var NomeContato = repositorioContato.SelecionarRegistroPorId(registroSelecionado.Contato.Id)?.Nome;
+
         var detalhesVM = new DetalhesCompromissoViewModel(
             id,
             registroSelecionado.Assunto,
@@ -138,7 +173,8 @@ public class CompromissoController : Controller
             registroSelecionado.HoraDeTermino,
             registroSelecionado.TipoCompromisso,
             registroSelecionado.Local,
-            registroSelecionado.Link
+            registroSelecionado.Link,
+            NomeContato
             );
 
         return View(detalhesVM);
