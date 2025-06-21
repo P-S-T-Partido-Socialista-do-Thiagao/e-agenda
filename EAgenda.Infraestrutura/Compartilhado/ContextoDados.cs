@@ -19,6 +19,7 @@ namespace EAgenda.Infraestrutura.Compartilhado
         public List<Categoria> Categorias { get; set; }
         public List<Despesa> Despesas { get; set; }
         public List<Tarefa> Tarefas { get; set; } 
+        public List<ItensTarefa> ItensTarefa { get; set; }
         public ContextoDados()
         {
             Contatos = new List<Contato>();
@@ -26,6 +27,7 @@ namespace EAgenda.Infraestrutura.Compartilhado
             Categorias = new List<Categoria>();
             Despesas = new List<Despesa>();
             Tarefas = new List<Tarefa>();
+            ItensTarefa = new List<ItensTarefa>();
         }
 
         public ContextoDados(bool carregarDados) : this()
@@ -75,6 +77,7 @@ namespace EAgenda.Infraestrutura.Compartilhado
             Categorias = contextoArmazenado.Categorias;
             Despesas = contextoArmazenado.Despesas;
             Tarefas = contextoArmazenado.Tarefas;
+            ItensTarefa = contextoArmazenado.ItensTarefa;
         }
     }
 }
