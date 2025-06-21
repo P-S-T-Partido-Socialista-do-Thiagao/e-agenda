@@ -4,6 +4,8 @@ using EAgenda.WebApp.Models;
 using EAgenda.Infraestrutura.Compartilhado;
 using EAgenda.Infraestrutura.ModuloCategoria;
 using EAgenda.WebApp.Extensions;
+using EAgenda.Dominio.ModuloDespesa;
+using EAgenda.Infraestrutura.ModuloDespesa;
 
 namespace EAgenda.WebApp.Controllers;
 
@@ -12,11 +14,13 @@ public class CategoriaController : Controller
 {
     private readonly ContextoDados contextoDados;
     private readonly IRepositorioCategoria repositorioCategoria;
+    private readonly IRepositorioDespesa repositorioDespesa;
 
     public CategoriaController()
     {
         contextoDados = new ContextoDados(true);
         repositorioCategoria = new RepositorioCategoriaEmArquivo(contextoDados);
+        repositorioDespesa = new RepositorioDespesaEmArquivo(contextoDados);
     }
 
     public IActionResult Index()
@@ -114,16 +118,25 @@ public class CategoriaController : Controller
     [HttpPost("excluir/{id:guid}")]
     public IActionResult ExcluirConfirmado(Guid id)
     {
-        foreach(var item in repositorioCategoria.SelecionarRegistros())
+        var despesas = repositorioDespesa.SelecionarRegistros();
+
+        foreach (var despesa in despesas)
         {
-            if (item.Despesas.Any(d => d.Id == id))
+            if (despesa.Categorias.Any(c => c.Id == id))
             {
-                ModelState.AddModelError("ExclusaoImpossivel", "Não é possível excluir uma categoria que possui despesas associadas.");
-                return View(new ExcluirCategoriaViewModel(id, item.Titulo));
+                ModelState.AddModelError("DespesaVinculada", "Não é possível excluir a categoria, pois ela está associada a uma despesa.");
+                break;
             }
         }
-        repositorioCategoria.ExcluirRegistro(id);
 
+        if (!ModelState.IsValid)
+        {
+            var registroSelecionado = repositorioCategoria.SelecionarRegistroPorId(id);
+            var excluirVM = new ExcluirCategoriaViewModel(registroSelecionado.Id, registroSelecionado.Titulo);
+            return View("Excluir", excluirVM);
+        }
+
+        repositorioCategoria.ExcluirRegistro(id);
         return RedirectToAction(nameof(Index));
     }
 
