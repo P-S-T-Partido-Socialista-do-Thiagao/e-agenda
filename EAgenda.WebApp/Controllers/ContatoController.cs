@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using EAgenda.Infraestrutura.ModuloContato;
 using EAgenda.WebApp.Models;
 using EAgenda.WebApp.Extensions;
+using EAgenda.Dominio.ModuloCompromisso;
+using EAgenda.Infraestrutura.ModuloCompromisso;
 
 namespace EAgenda.WebApp.Controllers;
 
@@ -12,11 +14,13 @@ public class ContatoController : Controller
 {
     private readonly ContextoDados contextoDados;
     private readonly IRepositorioContato repositorioContato;
+    private readonly IRepositorioCompromisso repositorioCompromisso;
 
     public ContatoController()
     {
         contextoDados = new ContextoDados(true);
         repositorioContato = new RepositorioContatoEmArquivo(contextoDados);
+        repositorioCompromisso = new RepositorioCompromissoEmArquivo(contextoDados);
     }
 
     public IActionResult Index()
@@ -127,8 +131,25 @@ public class ContatoController : Controller
     [HttpPost("excluir/{id:guid}")]
     public IActionResult ExcluirConfirmado(Guid id)
     {
-        repositorioContato.ExcluirRegistro(id);
+        var compromissos = repositorioCompromisso.SelecionarRegistros();    
 
+        foreach (var compromisso in compromissos)
+        {
+            if (compromisso.Contato.Id == id)
+            {
+                ModelState.AddModelError("ContatoVinculado", "Não é possível excluir o contato, pois ele está vinculado a um compromisso.");
+                break;
+            }
+        }
+
+        if (!ModelState.IsValid)
+        {
+            var registroSelecionado = repositorioContato.SelecionarRegistroPorId(id);
+            var excluirVM = new ExcluirContatoViewModel(registroSelecionado.Id, registroSelecionado.Nome);
+            return View("Excluir", excluirVM);
+        }
+
+        repositorioContato.ExcluirRegistro(id);
         return RedirectToAction(nameof(Index));
     }
 
