@@ -9,7 +9,7 @@
 <div class="container mt-4">
     <div class="card shadow-sm">
         <div class="card-header bg-light">
-            <h4>Tarefa: @Model.Tarefa</h4>
+            <h4>Tarefa: @Model.Tarefa.Titulo</h4>
         </div>
         <div class="card-body">
 
@@ -20,7 +20,7 @@
                 </div>
 
                 <div class="mt-4 d-flex justify-content-end gap-2">
-                <a href="/ItensTarefa" class="btn btn-outline-secondary">Visualizar</a>
+                <a href="/ItensTarefa/PorTarefa/@Model.Id" class="btn btn-outline-secondary">Visualizar</a>
                 <button type="submit" class="btn btn-primary">Cadastrar</button>
             </div>
             </form>

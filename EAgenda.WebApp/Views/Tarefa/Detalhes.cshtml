@@ -1,4 +1,4 @@
-﻿@model DetalhesTarefaViewModel
+﻿@model DetalhesTarefaViewModel;
 
 @{
     Layout = "_Layout";
@@ -35,7 +35,7 @@
                 </div>
                 <div class="form-group d-flex align-items-center justify-content-end gap-3 mt-5">
                     <a href="/tarefas" class="btn btn-outline-secondary">Voltar para a listagem</a>
-                    <a href="/ItensTarefa" class="btn btn-primary">Adicionar Item</a>
+                    <a href="/ItensTarefa/PorTarefa/@Model.Id" class="btn btn-primary">Adicionar Item</a>
                 </div>
             </div>
         </div>
