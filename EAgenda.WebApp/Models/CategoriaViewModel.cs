@@ -88,3 +88,13 @@ public class VisualizarCategoriaViewModel
             Titulo = titulo;
         }
     }
+
+public class DespesasCategoriaViewModel
+{
+    private List<Despesa> Despesas { get; set; } = new List<Despesa>();
+
+    public DespesasCategoriaViewModel(List<Despesa> despesas)
+    {
+        Despesas = despesas;
+    }
+}

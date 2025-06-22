@@ -1,5 +1,6 @@
 ﻿using ControleDeBar.Infraestrura.Arquivos.Compartilhado;
 using EAgenda.Dominio.ModuloCategoria;
+using EAgenda.Dominio.ModuloDespesa;
 using EAgenda.Infraestrutura.Compartilhado;
 
 namespace EAgenda.Infraestrutura.ModuloCategoria
@@ -11,7 +12,14 @@ namespace EAgenda.Infraestrutura.ModuloCategoria
         }
         protected override List<Categoria> ObterRegistros()
         {
-           return contexto.Categorias;
+            return contexto.Categorias;
+        }
+
+        public List<Despesa> SelecionarDespesasPorCategoria(Guid idCategoria)
+        {
+            return contexto.Despesas
+       .Where(d => d.Categorias.Any(c => c.Id == idCategoria))
+       .ToList();
         }
     }
 }

@@ -144,16 +144,15 @@ public class CategoriaController : Controller
     public IActionResult Detalhes(Guid id)
     {
         var registroSelecionado = repositorioCategoria.SelecionarRegistroPorId(id);
+        var despesas = repositorioCategoria.SelecionarDespesasPorCategoria(id);
 
         var detalhesVM = new DetalhesCategoriaViewModel(
             id,
             registroSelecionado.Titulo,
-            registroSelecionado.Despesas
+            despesas
             );
 
         return View(detalhesVM);
     }
-    
 }
-
 

@@ -21,13 +21,37 @@
                     <label for="Titulo" class="control-label fs-5">Título:</label>
                     <input name="Titulo" class="form-control" value="@Model.Titulo" readonly disabled />
                 </div>
-                <ul>
-                    @foreach (var despesa in Model.Despesas)
-                    {
-                        <li>@despesa.Descricao</li>
-                    }
-                </ul>
-
+                @if (Model is not null)
+{
+    @if (!Model.Despesas.Any())
+    {
+        <p>Nenhuma despesa foi encontrada para a categoria solicitada.</p>
+    }
+    else
+    {
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Data de ocorrência</th>
+                    <th>Forma de pagamento</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var despesa in Model.Despesas)
+                {
+                    <tr>
+                        <td>@despesa.Descricao</td>
+                        <td>@despesa.DataOcorrencia.ToShortDateString()</td>
+                        <td>@despesa.FormaPagamento</td>
+                        <td>@despesa.Valor.ToString("C2")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
                 <div class="form-group d-flex align-items-center justify-content-end gap-3 mt-5">
                     <a href="/categorias">Voltar para a listagem</a>
                 </div>
