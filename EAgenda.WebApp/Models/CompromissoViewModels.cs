@@ -17,9 +17,13 @@ namespace EAgenda.WebApp.Models
         public DateTime DataDeOcorrencia { get; set; } = DateTime.Now;
 
         [Required(ErrorMessage = "O campo \"Hora de Início\" é obrigatório.")]
+        [DisplayFormat(DataFormatString = @"{0:hh\:mm}", ApplyFormatInEditMode = true)]
+
         public TimeSpan HoraDeInicio { get; set; }
 
         [Required(ErrorMessage = "O campo \"Hora de Término\" é obrigatório.")]
+        [DisplayFormat(DataFormatString = @"{0:hh\:mm}", ApplyFormatInEditMode = true)]
+
         public TimeSpan HoraDeTermino { get; set; }
 
         [Required(ErrorMessage = "O campo \"Tipo de Compromisso\" é obrigatório.")]

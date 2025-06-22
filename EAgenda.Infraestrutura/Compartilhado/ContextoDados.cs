@@ -2,6 +2,7 @@
 using EAgenda.Dominio.ModuloCompromisso;
 using EAgenda.Dominio.ModuloContato;
 using EAgenda.Dominio.ModuloDespesa;
+using EAgenda.Dominio.ModuloItensTarefa;
 using EAgenda.Dominio.ModuloTarefa;
 using System.Text.Json;
 using System.Text.Json.Serialization;

@@ -48,15 +48,6 @@ public class CompromissoController : Controller
     {
         var registros = repositorioCompromisso.SelecionarRegistros();
 
-        foreach (var item in registros)
-        {
-            if (item.HoraDeInicio.Equals(cadastrarVM.HoraDeInicio))
-            {
-                ModelState.AddModelError("CadastroUnico", "Já existe um compromisso registrado nesse horário.");
-                break;
-            }
-        }
-
         if (cadastrarVM.TipoCompromisso.Equals("Remoto"))
         {
             if(cadastrarVM.Link == null)
@@ -69,6 +60,19 @@ public class CompromissoController : Controller
             if(cadastrarVM.Local == null)
             {
                 ModelState.AddModelError("CadastroUnico", "É necessário fornecer um local caso o compromisso seja presencial");
+            }
+        }
+
+        foreach (var compromisso in registros)
+        {
+            if (compromisso.DataDeOcorrencia.Date == cadastrarVM.DataDeOcorrencia.Date)
+            {
+                if (cadastrarVM.HoraDeInicio < compromisso.HoraDeTermino &&
+                    cadastrarVM.HoraDeTermino > compromisso.HoraDeInicio)
+                {
+                    ModelState.AddModelError("CadastroUnico", "Já existe um compromisso nesse horário.");
+                    break;
+                }
             }
         }
 
@@ -119,12 +123,18 @@ public class CompromissoController : Controller
     {
         var registros = repositorioCompromisso.SelecionarRegistros();
 
-        foreach (var item in registros)
+        if (editarVM.TipoCompromisso.Equals("Remoto"))
         {
-            if (!item.Id.Equals(id) && item.HoraDeInicio.Equals(editarVM.HoraDeInicio))
+            if (editarVM.Link == null)
             {
-                ModelState.AddModelError("CadastroUnico", "Já existe um compromisso registrado nesse horário.");
-                break;
+                ModelState.AddModelError("CadastroUnico", "É necessário fornecer um link caso o compromisso seja remoto");
+            }
+        }
+        else if (editarVM.TipoCompromisso.Equals("Presencial"))
+        {
+            if (editarVM.Local == null)
+            {
+                ModelState.AddModelError("CadastroUnico", "É necessário fornecer um local caso o compromisso seja presencial");
             }
         }
 
