@@ -86,15 +86,17 @@ public class ItensTarefaController : Controller
     }
 
     [HttpPost("AlternarStatus/{id:guid}")]
-    public IActionResult AlternarStatus(Guid id)
+    public IActionResult AlternarStatus(Guid id, EditarItensTarefaViewModel editarVM)
     {
-        var item = repositorioItensTarefa.SelecionarRegistroPorId(id);
-        if (item == null)
-            
-            return NotFound();
+        var registroSelecionado = repositorioItensTarefa.SelecionarRegistros()
+          .FirstOrDefault(x => x.Id == id);
 
-        item.Status = item.Status == "Concluído" ? "Incompleto" : "Concluído";
-        repositorioItensTarefa.EditarRegistro(id, item);
+        registroSelecionado.Status = registroSelecionado.Status == "Concluído" ? "Incompleto" : "Concluído";
+        
+        registroSelecionado = editarVM.ParaEntidade();
+
+        repositorioItensTarefa.EditarRegistro(id, registroSelecionado);
+        contextoDados.Salvar();
 
         return RedirectToAction(nameof(Index));
     }

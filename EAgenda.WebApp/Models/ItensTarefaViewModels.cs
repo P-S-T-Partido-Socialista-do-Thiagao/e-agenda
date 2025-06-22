@@ -54,6 +54,20 @@ public class VisualizarItensTarefaViewModel
     }
 }
 
+public class EditarItensTarefaViewModel : FormularioItensTarefaViewModel
+{
+    public Guid Id { get; set; }
+    public EditarItensTarefaViewModel() { }
+    public EditarItensTarefaViewModel(Guid id, string titulo, string status, Tarefa tarefa)
+    {
+        Id = id;
+        Titulo = titulo;
+        Status = status;
+        Tarefa = tarefa;
+    }
+}
+
+
 public class DetalhesItensTarefaViewModel
 {
     public Guid Id { get; set; }
