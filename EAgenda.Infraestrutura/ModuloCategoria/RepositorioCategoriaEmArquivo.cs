@@ -1,4 +1,5 @@
 ﻿using ControleDeBar.Infraestrura.Arquivos.Compartilhado;
+using EAgenda.Dominio.Compartilhado;
 using EAgenda.Dominio.ModuloCategoria;
 using EAgenda.Dominio.ModuloDespesa;
 using EAgenda.Infraestrutura.Compartilhado;
@@ -21,5 +22,6 @@ namespace EAgenda.Infraestrutura.ModuloCategoria
        .Where(d => d.Categorias.Any(c => c.Id == idCategoria))
        .ToList();
         }
+
     }
 }

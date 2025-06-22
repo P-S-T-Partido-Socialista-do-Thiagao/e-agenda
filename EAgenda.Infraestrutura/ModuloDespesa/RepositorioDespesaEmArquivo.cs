@@ -1,4 +1,5 @@
 ﻿using ControleDeBar.Infraestrura.Arquivos.Compartilhado;
+using EAgenda.Dominio.Compartilhado;
 using EAgenda.Dominio.ModuloContato;
 using EAgenda.Dominio.ModuloDespesa;
 using EAgenda.Infraestrutura.Compartilhado;
@@ -14,4 +15,5 @@ public class RepositorioDespesaEmArquivo : RepositorioBaseEmArquivo<Despesa>, IR
     {
         return contexto.Despesas;
     }
+
 }

@@ -57,6 +57,12 @@ public abstract class RepositorioBaseEmArquivo<T> where T : EntidadeBase<T>
         return false;
     }
 
+    public void ExcluirItem(T item)
+    {
+        registros.Remove(item);
+        contexto.Salvar();
+    }
+
     public List<T> SelecionarRegistros()
     {
         return registros;

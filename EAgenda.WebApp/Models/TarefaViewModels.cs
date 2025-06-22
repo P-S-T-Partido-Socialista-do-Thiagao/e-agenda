@@ -16,10 +16,10 @@ namespace EAgenda.WebApp.Models
         public string Prioridade { get; set; }
 
         [Required(ErrorMessage = "O campo \"Data de Criação\" é obrigatório.")]
-        public DateTime DataCriacao { get; set; }
+        public DateTime DataCriacao { get; set; } = DateTime.Now;
 
         [Required(ErrorMessage = "O campo \"Data de Conclusão\" é obrigatório.")]
-        public DateTime DataConclusao { get; set; }
+        public DateTime DataConclusao { get; set; } = DateTime.Now;
         public float PercentualConcluido { get; set; }
     }
 

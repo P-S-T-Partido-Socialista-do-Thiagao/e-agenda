@@ -1,4 +1,5 @@
 ﻿using ControleDeBar.Infraestrura.Arquivos.Compartilhado;
+using EAgenda.Dominio.Compartilhado;
 using EAgenda.Dominio.ModuloCompromisso;
 using EAgenda.Infraestrutura.Compartilhado;
 
@@ -13,6 +14,7 @@ namespace EAgenda.Infraestrutura.ModuloCompromisso
         {
             return contexto.Compromissos;
         }
+
     }    
     
 }
