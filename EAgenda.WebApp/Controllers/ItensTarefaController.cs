@@ -66,7 +66,8 @@ public class ItensTarefaController : Controller
     [HttpGet("excluir/{id:guid}")]
     public IActionResult Excluir(Guid id)
     {
-        var registroSelecionado = repositorioItensTarefa.SelecionarRegistroPorId(id);
+        var registroSelecionado = repositorioItensTarefa.SelecionarRegistros()
+            .FirstOrDefault(x => x.Id == id);
 
         var excluirVM = new ExcluirItensTarefaViewModel(registroSelecionado.Id, registroSelecionado.Titulo);
 
@@ -76,9 +77,11 @@ public class ItensTarefaController : Controller
     [HttpPost("excluir/{id:guid}")]
     public IActionResult ExcluirConfirmado(Guid id)
     {
-        var registros = repositorioItensTarefa.SelecionarRegistros();
+        var registroSelecionado = repositorioItensTarefa.SelecionarRegistros()
+          .FirstOrDefault(x => x.Id == id);
 
-        repositorioItensTarefa.ExcluirRegistro(id);
+        repositorioItensTarefa.ExcluirItem(registroSelecionado);
+
         return RedirectToAction(nameof(Index));
     }
 

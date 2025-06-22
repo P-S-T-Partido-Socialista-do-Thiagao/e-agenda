@@ -2,6 +2,7 @@
 using EAgenda.Dominio.ModuloTarefa;
 using EAgenda.Dominio.ModuloItensTarefa;
 using EAgenda.Infraestrutura.Compartilhado;
+using EAgenda.Dominio.Compartilhado;
 
 namespace EAgenda.Infraestrutura.ModuloItensTarefa
 {
@@ -14,6 +15,11 @@ namespace EAgenda.Infraestrutura.ModuloItensTarefa
         protected override List<ItensTarefa> ObterRegistros() 
         {
             return contexto.ItensTarefa;
+        }
+
+        public ItensTarefa SelecionarItemPorId(Guid id)
+        {
+            return contexto.ItensTarefa.FirstOrDefault(x => x.Id == id);
         }
     }
 }

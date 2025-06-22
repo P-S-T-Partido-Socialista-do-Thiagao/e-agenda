@@ -1,3 +1,7 @@
+using EAgenda.Dominio.ModuloItensTarefa;
+using EAgenda.Infraestrutura.Compartilhado;
+using EAgenda.Infraestrutura.ModuloItensTarefa;
+
 namespace EAgenda.WebApp
 {
     public class Program
@@ -16,6 +20,7 @@ namespace EAgenda.WebApp
             app.MapDefaultControllerRoute();
 
             app.Run();
+
         }
     }
 }
