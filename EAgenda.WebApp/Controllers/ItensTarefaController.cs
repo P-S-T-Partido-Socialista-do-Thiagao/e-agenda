@@ -82,11 +82,12 @@ public class ItensTarefaController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpPost("alternar-status/{id:guid}")]
+    [HttpPost("AlternarStatus/{id:guid}")]
     public IActionResult AlternarStatus(Guid id)
     {
         var item = repositorioItensTarefa.SelecionarRegistroPorId(id);
         if (item == null)
+            
             return NotFound();
 
         item.Status = item.Status == "Concluído" ? "Incompleto" : "Concluído";
@@ -94,5 +95,4 @@ public class ItensTarefaController : Controller
 
         return RedirectToAction(nameof(Index));
     }
-
 }

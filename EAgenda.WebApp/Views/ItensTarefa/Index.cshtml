@@ -25,10 +25,11 @@
                     <p class="card-text"><span class="fw-semibold">Status:</span> @item.Status</p>
 
                     <span class="d-flex gap-1 justify-content-end mt-4">
-                        <a href="/ItensTarefa class="btn btn-secondary rounded-circle opcao-card">
-                            <i class="bi bi-check"></i>
-                            @(item.Status == "Concluído" ? "Incompleto" : "Concluído")
-                        </a>
+                        <form asp-action="AlternarStatus" asp-route-id="@item.Id" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-secondary rounded-circle opcao-card" title="=Alternar status">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </button>
+                        </form>
                         <a href="/ItensTarefa/excluir/@item.Id" class="btn btn-danger rounded-circle opcao-card">
                             <i class="bi bi-trash"></i>
                         </a>
