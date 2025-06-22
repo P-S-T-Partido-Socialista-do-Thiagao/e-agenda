@@ -13,15 +13,15 @@
             <div class="card-body p-md-5">
                 <h3>Formulário de Exclusão</h3>
 
-                <p class="mt-4">Você deseja realmente excluir o contato "@Model.Titulo"?</p>
+                <p class="mt-4">Você deseja realmente excluir a tarefa "@Model.Titulo"?</p>
 
                 <form asp-action="Excluir" asp-route-id="@Model.Id">
                     <div class="form-group d-flex align-items-center justify-content-end gap-3">
-                        <a href="/contatos">Voltar para a listagem</a>
+                        <a href="/tarefas" class="btn btn-outline-secondary">Voltar para a listagem</a>
                         <button type="submit" class="btn btn-danger px-5">Confirmar</button>
                     </div>
                 </form>
             </div>
         </div>
-    </div>
+    </div>  
 </div>

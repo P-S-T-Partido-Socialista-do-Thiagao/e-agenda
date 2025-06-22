@@ -7,7 +7,7 @@ namespace EAgenda.Infraestrutura.ModuloItensTarefa
 {
     public class RepositorioItensTarefaEmArquivo : RepositorioBaseEmArquivo<ItensTarefa>, IRepositorioItensTarefa
     {
-        public RepositorioItensTarefaEmArquivo(ContextoDados contexto) : base(contexto) 
+        public RepositorioItensTarefaEmArquivo(ContextoDados contextoDados) : base(contextoDados) 
         {
         }
 

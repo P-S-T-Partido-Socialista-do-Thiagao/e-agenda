@@ -68,7 +68,7 @@ public class ItensTarefaController : Controller
     {
         var registroSelecionado = repositorioItensTarefa.SelecionarRegistroPorId(id);
 
-        var excluirVM = new ExcluirItensTarefaViewModel(registroSelecionado.Id, registroSelecionado.Titulo)
+        var excluirVM = new ExcluirItensTarefaViewModel(registroSelecionado.Id, registroSelecionado.Titulo);
 
         return View(excluirVM);
     }
@@ -79,6 +79,19 @@ public class ItensTarefaController : Controller
         var registros = repositorioItensTarefa.SelecionarRegistros();
 
         repositorioItensTarefa.ExcluirRegistro(id);
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost("alternar-status/{id:guid}")]
+    public IActionResult AlternarStatus(Guid id)
+    {
+        var item = repositorioItensTarefa.SelecionarRegistroPorId(id);
+        if (item == null)
+            return NotFound();
+
+        item.Status = item.Status == "Concluído" ? "Incompleto" : "Concluído";
+        repositorioItensTarefa.EditarRegistro(id, item);
+
         return RedirectToAction(nameof(Index));
     }
 
