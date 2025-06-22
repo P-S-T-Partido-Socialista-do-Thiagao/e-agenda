@@ -41,6 +41,8 @@ public class ItensTarefaController : Controller
         var cadastrarVM = new CadastrarItensTarefaViewModel();
         cadastrarVM.Tarefa = repositorioTarefa.SelecionarRegistroPorId(tarefaId);
 
+        cadastrarVM.TarefaId = tarefaId;
+
         return View(cadastrarVM);
     }
 
@@ -86,9 +88,11 @@ public class ItensTarefaController : Controller
         var registroSelecionado = repositorioItensTarefa.SelecionarRegistros()
           .FirstOrDefault(x => x.Id == id);
 
+        Guid tarefaIdDaQualVeio = registroSelecionado.Tarefa.Id;
+
         repositorioItensTarefa.ExcluirItem(registroSelecionado);
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction("PorTarefa", new { tarefaId = tarefaIdDaQualVeio });
     }
 
     [HttpPost("AlternarStatus/{id:guid}")]
@@ -97,14 +101,14 @@ public class ItensTarefaController : Controller
         var registroSelecionado = repositorioItensTarefa.SelecionarRegistros()
           .FirstOrDefault(x => x.Id == id);
 
+        Guid tarefaIdDaQualVeio = registroSelecionado.Tarefa.Id;
+
         registroSelecionado.Status = registroSelecionado.Status == "Concluído" ? "Incompleto" : "Concluído";
         
-        registroSelecionado = editarVM.ParaEntidade();
-
         repositorioItensTarefa.EditarRegistro(id, registroSelecionado);
         contextoDados.Salvar();
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction("PorTarefa", new { tarefaId = tarefaIdDaQualVeio});
     }
 
     [HttpGet("PorTarefa/{tarefaId:guid}")]

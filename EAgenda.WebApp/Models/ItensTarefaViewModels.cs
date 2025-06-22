@@ -15,6 +15,7 @@ public class FormularioItensTarefaViewModel
 
 public class CadastrarItensTarefaViewModel : FormularioItensTarefaViewModel
 {
+    public Guid TarefaId { get; set; }
     public CadastrarItensTarefaViewModel() { }
 
     public CadastrarItensTarefaViewModel(string titulo, string status, Tarefa tarefa)

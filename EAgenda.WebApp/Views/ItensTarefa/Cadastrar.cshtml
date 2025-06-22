@@ -14,6 +14,8 @@
         <div class="card-body">
 
             <form asp-controller="ItensTarefa" asp-action="Cadastrar" method="post">
+               <input type="hidden" asp-for="TarefaId" />
+                
                 <div class="flex-grow-1 me-3">
                     <label asp-for="Titulo" class="form-label fw-bold">Novo Item:</label>
                     <input asp-for="Titulo" class="form-control" placeholder="Digite o título do novo item" />
