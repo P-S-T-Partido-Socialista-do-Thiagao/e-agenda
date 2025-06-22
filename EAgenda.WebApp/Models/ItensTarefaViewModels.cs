@@ -8,7 +8,7 @@ public class FormularioItensTarefaViewModel
 {
     public Guid Id { get; set; }
     public string Titulo { get; set; }
-    public string Status { get; set; }
+    public string Status { get; set; } = "Incompleto";
     public Tarefa Tarefa { get; set; }
 
 }

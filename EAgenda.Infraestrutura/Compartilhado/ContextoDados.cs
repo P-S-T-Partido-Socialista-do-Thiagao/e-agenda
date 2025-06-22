@@ -4,6 +4,7 @@ using EAgenda.Dominio.ModuloContato;
 using EAgenda.Dominio.ModuloDespesa;
 using EAgenda.Dominio.ModuloItensTarefa;
 using EAgenda.Dominio.ModuloTarefa;
+using EAgenda.Dominio.ModuloItensTarefa;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using static System.Net.Mime.MediaTypeNames;
