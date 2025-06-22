@@ -114,12 +114,17 @@ public class ItensTarefaController : Controller
     [HttpGet("PorTarefa/{tarefaId:guid}")]
     public IActionResult PorTarefa(Guid tarefaId)
     {
+        var tarefaPai = repositorioTarefa.SelecionarRegistroPorId(tarefaId);
+
         var itensDaTarefa = repositorioItensTarefa
             .SelecionarRegistros()
             .Where(x => x.Tarefa != null && x.Tarefa.Id == tarefaId)
             .ToList();
 
-        var visualizarVM = new VisualizarItensTarefaViewModel(itensDaTarefa);
+        var visualizarVM = new VisualizarItensTarefaViewModel(itensDaTarefa)
+        {
+            TituloTarefa = tarefaPai.Titulo
+        };
 
         ViewBag.TarefaId = tarefaId; // Para usar em links de adicionar item
 

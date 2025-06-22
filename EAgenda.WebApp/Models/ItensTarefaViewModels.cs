@@ -42,6 +42,8 @@ public class ExcluirItensTarefaViewModel
 
 public class VisualizarItensTarefaViewModel
 {
+    public string TituloTarefa { get; set; }
+
     public List<DetalhesItensTarefaViewModel> Registros { get; set; }
 
     public VisualizarItensTarefaViewModel(List<ItensTarefa> itens)
