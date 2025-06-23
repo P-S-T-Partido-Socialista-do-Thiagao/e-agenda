@@ -64,11 +64,16 @@ public class ItensTarefaController : Controller
         //if (!ModelState.IsValid)
         //    return View(cadastrarVM);
 
+        var tarefaPai = repositorioTarefa.SelecionarRegistroPorId(cadastrarVM.TarefaId);
         var entidade = cadastrarVM.ParaEntidade();
+        
+        entidade.Tarefa = tarefaPai;
 
         repositorioItensTarefa.CadastrarRegistro(entidade);
+        tarefaPai.Itens.Add(entidade);
+        contextoDados.Salvar();
 
-        return RedirectToAction("PorTarefa", new { tarefaId });
+        return RedirectToAction("PorTarefa", new { tarefaId = cadastrarVM.TarefaId });
     }
 
     [HttpGet("excluir/{id:guid}")]
@@ -87,10 +92,16 @@ public class ItensTarefaController : Controller
     {
         var registroSelecionado = repositorioItensTarefa.SelecionarRegistros()
           .FirstOrDefault(x => x.Id == id);
+        
+        var tarefaPai = registroSelecionado.Tarefa;
+
+        repositorioItensTarefa.ExcluirItem(registroSelecionado);
+        tarefaPai.Itens.Remove(registroSelecionado);
+
+        contextoDados.Salvar();
 
         Guid tarefaIdDaQualVeio = registroSelecionado.Tarefa.Id;
 
-        repositorioItensTarefa.ExcluirItem(registroSelecionado);
 
         return RedirectToAction("PorTarefa", new { tarefaId = tarefaIdDaQualVeio });
     }
@@ -104,9 +115,24 @@ public class ItensTarefaController : Controller
         Guid tarefaIdDaQualVeio = registroSelecionado.Tarefa.Id;
 
         registroSelecionado.Status = registroSelecionado.Status == "Concluído" ? "Incompleto" : "Concluído";
-        
         repositorioItensTarefa.EditarRegistro(id, registroSelecionado);
-        contextoDados.Salvar();
+
+        var tarefa = registroSelecionado.Tarefa;
+        if (tarefa != null)
+        {
+            // Recalcule o percentual concluído
+            var itensDaTarefa = repositorioItensTarefa.SelecionarRegistros()
+                .Where(x => x.Tarefa != null && x.Tarefa.Id == tarefa.Id)
+                .ToList();
+
+            float total = itensDaTarefa.Count;
+            float concluidos = itensDaTarefa.Count(x => x.Status == "Concluído");
+            tarefa.PercentualConcluido = total == 0 ? 0 : (float)Math.Round((concluidos / total) * 100, 2);
+
+            repositorioTarefa.EditarRegistro(tarefa.Id, tarefa);
+            contextoDados.Salvar();
+        }
+
 
         return RedirectToAction("PorTarefa", new { tarefaId = tarefaIdDaQualVeio});
     }
