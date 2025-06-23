@@ -1,6 +1,8 @@
 ﻿using EAgenda.Infraestrutura.Compartilhado;
 using EAgenda.Dominio.ModuloItensTarefa;
 using EAgenda.Infraestrutura.ModuloItensTarefa;
+using EAgenda.Dominio.ModuloTarefa;
+using EAgenda.Infraestrutura.ModuloTarefa;
 using EAgenda.WebApp.Extensions;
 using EAgenda.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +17,13 @@ public class ItensTarefaController : Controller
 {
     private readonly ContextoDados contextoDados;
     private readonly IRepositorioItensTarefa repositorioItensTarefa;
+    private readonly IRepositorioTarefa repositorioTarefa;
 
     public ItensTarefaController()
     {
         contextoDados = new ContextoDados(true);
         repositorioItensTarefa = new RepositorioItensTarefaEmArquivo(contextoDados);
+        repositorioTarefa = new RepositorioTarefaEmArquivo(contextoDados);
     }
 
     public IActionResult Index()
@@ -32,16 +36,20 @@ public class ItensTarefaController : Controller
     }
 
     [HttpGet("cadastrar")]
-    public IActionResult Cadastrar()
+    public IActionResult Cadastrar(Guid tarefaId)
     {
         var cadastrarVM = new CadastrarItensTarefaViewModel();
+        cadastrarVM.Tarefa = repositorioTarefa.SelecionarRegistroPorId(tarefaId);
+
+        cadastrarVM.TarefaId = tarefaId;
 
         return View(cadastrarVM);
     }
 
     [HttpPost("cadastrar")]
-    public IActionResult Cadastrar(CadastrarItensTarefaViewModel cadastrarVM)
+    public IActionResult Cadastrar(CadastrarItensTarefaViewModel cadastrarVM, Guid tarefaId)
     {
+        cadastrarVM.Tarefa = repositorioTarefa.SelecionarRegistroPorId(tarefaId);
         var registros = repositorioItensTarefa.SelecionarRegistros();
 
         //foreach (var item in registros)
@@ -56,11 +64,16 @@ public class ItensTarefaController : Controller
         //if (!ModelState.IsValid)
         //    return View(cadastrarVM);
 
+        var tarefaPai = repositorioTarefa.SelecionarRegistroPorId(cadastrarVM.TarefaId);
         var entidade = cadastrarVM.ParaEntidade();
+        
+        entidade.Tarefa = tarefaPai;
 
         repositorioItensTarefa.CadastrarRegistro(entidade);
+        tarefaPai.Itens.Add(entidade);
+        contextoDados.Salvar();
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction("PorTarefa", new { tarefaId = cadastrarVM.TarefaId });
     }
 
     [HttpGet("excluir/{id:guid}")]
@@ -79,10 +92,18 @@ public class ItensTarefaController : Controller
     {
         var registroSelecionado = repositorioItensTarefa.SelecionarRegistros()
           .FirstOrDefault(x => x.Id == id);
+        
+        var tarefaPai = registroSelecionado.Tarefa;
 
         repositorioItensTarefa.ExcluirItem(registroSelecionado);
+        tarefaPai.Itens.Remove(registroSelecionado);
 
-        return RedirectToAction(nameof(Index));
+        contextoDados.Salvar();
+
+        Guid tarefaIdDaQualVeio = registroSelecionado.Tarefa.Id;
+
+
+        return RedirectToAction("PorTarefa", new { tarefaId = tarefaIdDaQualVeio });
     }
 
     [HttpPost("AlternarStatus/{id:guid}")]
@@ -91,13 +112,48 @@ public class ItensTarefaController : Controller
         var registroSelecionado = repositorioItensTarefa.SelecionarRegistros()
           .FirstOrDefault(x => x.Id == id);
 
+        Guid tarefaIdDaQualVeio = registroSelecionado.Tarefa.Id;
+
         registroSelecionado.Status = registroSelecionado.Status == "Concluído" ? "Incompleto" : "Concluído";
-        
-        registroSelecionado = editarVM.ParaEntidade();
-
         repositorioItensTarefa.EditarRegistro(id, registroSelecionado);
-        contextoDados.Salvar();
 
-        return RedirectToAction(nameof(Index));
+        var tarefa = registroSelecionado.Tarefa;
+        if (tarefa != null)
+        {
+            // Recalcule o percentual concluído
+            var itensDaTarefa = repositorioItensTarefa.SelecionarRegistros()
+                .Where(x => x.Tarefa != null && x.Tarefa.Id == tarefa.Id)
+                .ToList();
+
+            float total = itensDaTarefa.Count;
+            float concluidos = itensDaTarefa.Count(x => x.Status == "Concluído");
+            tarefa.PercentualConcluido = total == 0 ? 0 : (float)Math.Round((concluidos / total) * 100, 2);
+
+            repositorioTarefa.EditarRegistro(tarefa.Id, tarefa);
+            contextoDados.Salvar();
+        }
+
+
+        return RedirectToAction("PorTarefa", new { tarefaId = tarefaIdDaQualVeio});
+    }
+
+    [HttpGet("PorTarefa/{tarefaId:guid}")]
+    public IActionResult PorTarefa(Guid tarefaId)
+    {
+        var tarefaPai = repositorioTarefa.SelecionarRegistroPorId(tarefaId);
+
+        var itensDaTarefa = repositorioItensTarefa
+            .SelecionarRegistros()
+            .Where(x => x.Tarefa != null && x.Tarefa.Id == tarefaId)
+            .ToList();
+
+        var visualizarVM = new VisualizarItensTarefaViewModel(itensDaTarefa)
+        {
+            TituloTarefa = tarefaPai.Titulo
+        };
+
+        ViewBag.TarefaId = tarefaId; // Para usar em links de adicionar item
+
+        return View("Index", visualizarVM);
     }
 }

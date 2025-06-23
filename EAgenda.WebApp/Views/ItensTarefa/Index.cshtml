@@ -7,19 +7,20 @@
 }
 
 <p>
-    <a class="btn btn-primary px-4" href="/ItensTarefa/cadastrar">
+    <a class="btn btn-primary px-4" href="/ItensTarefa/cadastrar?TarefaId=@ViewBag.TarefaId">
         <i class="bi bi-plus"></i>
         Cadastrar Novo
     </a>
 </p>
 
 <hr />
+    <h class="lead mb-1.5">Tarefa: @Model.TituloTarefa</h>
 
 <div class="d-flex flex-wrap gap-2">
     @foreach (var item in Model.Registros)
     {
         <div class="col-12 col-md-3">
-            <div class="card border-0">
+            <div class="card border-0 h-100">
                 <div class="card-body">
                     <h5 class="card-title">Titulo: @item.Titulo</h5>
                     <p class="card-text"><span class="fw-semibold">Status:</span> @item.Status</p>

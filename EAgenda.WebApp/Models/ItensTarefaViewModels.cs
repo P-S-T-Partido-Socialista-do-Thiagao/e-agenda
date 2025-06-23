@@ -15,6 +15,7 @@ public class FormularioItensTarefaViewModel
 
 public class CadastrarItensTarefaViewModel : FormularioItensTarefaViewModel
 {
+    public Guid TarefaId { get; set; }
     public CadastrarItensTarefaViewModel() { }
 
     public CadastrarItensTarefaViewModel(string titulo, string status, Tarefa tarefa)
@@ -41,6 +42,8 @@ public class ExcluirItensTarefaViewModel
 
 public class VisualizarItensTarefaViewModel
 {
+    public string TituloTarefa { get; set; }
+
     public List<DetalhesItensTarefaViewModel> Registros { get; set; }
 
     public VisualizarItensTarefaViewModel(List<ItensTarefa> itens)

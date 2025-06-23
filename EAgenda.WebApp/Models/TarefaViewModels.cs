@@ -95,19 +95,29 @@ namespace EAgenda.WebApp.Models
         public string Prioridade { get; set; }
         public DateTime DataCriacao { get; set; }
         public DateTime DataConclusao { get; set; }
-        public float PercentualConcluido { get; set; }
+        public float PercentualConcluido
+        {
+            get
+            {
+                if (Itens.Count == 0)
+                    return 0;
+
+                float itensConcluidos = Itens.Count(item => item.Status == "Concluído");
+
+                return (float)Math.Round((itensConcluidos / Itens.Count) * 100f);
+            }
+        }
         public List<ItensTarefa> Itens { get; set; } = new List<ItensTarefa>();
 
         public DetalhesTarefaViewModel() { }
 
-        public DetalhesTarefaViewModel(Guid id, string titulo, string prioridade, DateTime dataCriacao, DateTime dataConclusao, float percentualConcluido, List<ItensTarefa> itens)
+        public DetalhesTarefaViewModel(Guid id, string titulo, string prioridade, DateTime dataCriacao, DateTime dataConclusao, List<ItensTarefa> itens)
         {
             Id = id;
             Titulo = titulo;
             Prioridade = prioridade;
             DataCriacao = dataCriacao;
             DataConclusao = dataConclusao;
-            PercentualConcluido = percentualConcluido;
             Itens = itens ?? new List<ItensTarefa>();
         }
     }

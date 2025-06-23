@@ -108,7 +108,6 @@ public class TarefaController : Controller
             registroSelecionado.Prioridade,
             registroSelecionado.DataCriacao,
             registroSelecionado.DataConclusao,
-            registroSelecionado.PercentualConcluido,
             registroSelecionado.Itens
         );
 

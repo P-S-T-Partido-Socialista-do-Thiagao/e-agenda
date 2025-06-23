@@ -7,7 +7,7 @@ namespace EAgenda.WebApp.Extensions
     {
         public static Tarefa ParaEntidade(this FormularioTarefaViewModel formularioVM)
         {
-            return new Tarefa(formularioVM.Titulo, formularioVM.Prioridade, formularioVM.DataCriacao, formularioVM.DataConclusao, formularioVM.PercentualConcluido);
+            return new Tarefa(formularioVM.Titulo, formularioVM.Prioridade, formularioVM.DataCriacao, formularioVM.DataConclusao);
         }
 
 
@@ -20,7 +20,6 @@ namespace EAgenda.WebApp.Extensions
                 Prioridade = tarefa.Prioridade,
                 DataCriacao = tarefa.DataCriacao,
                 DataConclusao = tarefa.DataConclusao,
-                PercentualConcluido = tarefa.PercentualConcluido
             };
         }
     }
