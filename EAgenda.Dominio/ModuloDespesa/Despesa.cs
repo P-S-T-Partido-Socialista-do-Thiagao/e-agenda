@@ -10,17 +10,36 @@ namespace EAgenda.Dominio.ModuloDespesa
         public decimal Valor {  get; set; }
         public string FormaPagamento {  get; set; }
         public List<Categoria> Categorias { get; set; }
-        public DateTime DataCadastro {  get; set; }
 
-        public Despesa() { }
-        public Despesa (string descricao, DateTime dataOcorrencia, decimal valor, string formaPagamento, List<Categoria> categorias)
+        public Despesa()
+        {
+            Categorias = new List<Categoria>();
+        }
+        public Despesa (string descricao, DateTime dataOcorrencia, decimal valor, string formaPagamento) : this()
         {
             Id = Guid.NewGuid();
             Descricao = descricao;
             DataOcorrencia = dataOcorrencia;
             Valor = valor;
             FormaPagamento = formaPagamento;
-            Categorias = categorias;
+        }
+
+        public void RegistarCategoria(Categoria categoria)
+        {
+            if (Categorias.Contains(categoria))
+                return;
+
+            categoria.Despesas.Add(this);
+            Categorias.Add(categoria);
+        }
+
+        public void RemoverCategoria(Categoria categoria)
+        {
+            if (!Categorias.Contains(categoria))
+                return;
+
+            categoria.Despesas.Remove(this);
+            Categorias.Remove(categoria);
         }
 
         public override void AtualizarRegistro(Despesa registroEditado)

@@ -15,13 +15,5 @@ namespace EAgenda.Infraestrutura.ModuloCategoria
         {
             return contexto.Categorias;
         }
-
-        public List<Despesa> SelecionarDespesasPorCategoria(Guid idCategoria)
-        {
-            return contexto.Despesas
-       .Where(d => d.Categorias.Any(c => c.Id == idCategoria))
-       .ToList();
-        }
-
     }
 }

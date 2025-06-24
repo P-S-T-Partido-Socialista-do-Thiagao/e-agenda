@@ -1,4 +1,5 @@
-﻿using EAgenda.Dominio.ModuloCategoria;
+﻿using eAgenda.WebApp.Extensions;
+using EAgenda.Dominio.ModuloCategoria;
 using EAgenda.Dominio.ModuloDespesa;
 using EAgenda.Infraestrutura.Compartilhado;
 using EAgenda.Infraestrutura.ModuloCategoria;
@@ -43,26 +44,43 @@ namespace EAgenda.WebApp.Controllers
         [HttpPost("cadastrar")]
         public IActionResult Cadastrar(CadastrarDespesaViewModel cadastrarVM)
         {
-            var registros = repositorioDespesa.SelecionarRegistros();
-            foreach (var item in registros)
+            var categoriasDisponiveis = repositorioCategoria.SelecionarRegistros();
+
+            if (!ModelState.IsValid)
             {
-                if (item.Descricao.Equals(cadastrarVM.Descricao))
+                foreach (var cd in categoriasDisponiveis)
                 {
-                    ModelState.AddModelError("CadastroUnico", "Já existe uma despesa registrada com essa descrição.");
-                    break;
+                    var selecionarVM = new SelectListItem(cd.Titulo, cd.Id.ToString());
+
+                    cadastrarVM.CategoriasDisponiveis?.Add(selecionarVM);
+                }
+
+                return View(cadastrarVM);
+            }
+
+            var despesa = cadastrarVM.ParaEntidade();
+
+            // Adiciona as categorias selecionadas à despesa
+            var categoriasSelecionadas = cadastrarVM.Categorias;
+
+            if (categoriasSelecionadas is not null)
+            {
+                foreach (var cs in categoriasSelecionadas)
+                {
+                    foreach (var cd in categoriasDisponiveis)
+                    {
+                        if (cs.Equals(cd.Id))
+                        {
+                            despesa.RegistarCategoria(cd);
+                            break;
+                        }
+                    }
                 }
             }
 
-            if (!ModelState.IsValid)
-                return View(cadastrarVM);
+            repositorioDespesa.CadastrarRegistro(despesa);
 
-            var categorias = repositorioCategoria.SelecionarRegistros();
-
-            var entidade = cadastrarVM.ParaEntidade(categorias);
-
-            repositorioDespesa.CadastrarRegistro(entidade);
-
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet("editar/{id:guid}")]
@@ -94,25 +112,50 @@ namespace EAgenda.WebApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Editar(Guid id, EditarDespesaViewModel editarVM)
         {
-            var registros = repositorioDespesa.SelecionarRegistros();
-            foreach (var item in registros)
+            var categoriasDisponiveis = repositorioCategoria.SelecionarRegistros();
+
+            if (!ModelState.IsValid)
             {
-                if (item.Descricao.Equals(editarVM.Descricao) && item.Id != id)
+                foreach (var cd in categoriasDisponiveis)
                 {
-                    ModelState.AddModelError("CadastroUnico", "Já existe uma despesa registrada com essa descrição.");
-                    break;
+                    var selecionarVM = new SelectListItem(cd.Titulo, cd.Id.ToString());
+
+                    editarVM.CategoriasDisponiveis?.Add(selecionarVM);
+                }
+
+                return View(editarVM);
+            }
+
+            // Obtém dados editados
+            var despesaEditada = editarVM.ParaEntidade();
+            var categoriasSelecionadas = editarVM.Categorias;
+
+            var despesaSelecionada = repositorioDespesa.SelecionarRegistroPorId(id);
+
+            // Remove as categorias anteriores da despesa
+            foreach (var categoria in despesaSelecionada.Categorias.ToList())
+                despesaSelecionada.RemoverCategoria(categoria);
+
+            // Adiciona as categorias selecionadas
+            if (categoriasSelecionadas is not null)
+            {
+                foreach (var idSelecionado in categoriasSelecionadas)
+                {
+                    foreach (var categoriaDisponivel in categoriasDisponiveis)
+                    {
+                        if (categoriaDisponivel.Id.Equals(idSelecionado))
+                        {
+                            despesaSelecionada.RegistarCategoria(categoriaDisponivel);
+                            break;
+                        }
+                    }
                 }
             }
-            if (!ModelState.IsValid)
-                return View(editarVM);
 
-            var categorias = repositorioCategoria.SelecionarRegistros();
+            // Atualiza os dados da despesa selecionada
+            repositorioDespesa.EditarRegistro(id, despesaEditada);
 
-            var entidade = editarVM.ParaEntidade(categorias);
-
-            repositorioDespesa.EditarRegistro(id, entidade);
-
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet("excluir/{id:guid}")]
@@ -134,21 +177,15 @@ namespace EAgenda.WebApp.Controllers
         [HttpGet("detalhes/{id:guid}")]
         public IActionResult Detalhes(Guid id)
         {
-            var registro = repositorioDespesa.SelecionarRegistroPorId(id);
-
-            var titulosCategorias = new List<string>();
-            foreach (var categoria in registro.Categorias)
-            {
-                titulosCategorias.Add(categoria.Titulo);
-            }
+            var registroSelecionado = repositorioDespesa.SelecionarRegistroPorId(id);
 
             var detalhesVM = new DetalhesDespesaViewModel(
-                registro.Id,
-                registro.Descricao,
-                registro.DataOcorrencia,
-                registro.Valor,
-                registro.FormaPagamento,
-                titulosCategorias
+                id,
+                registroSelecionado.Descricao,
+                registroSelecionado.DataOcorrencia,
+                registroSelecionado.Valor,
+                registroSelecionado.FormaPagamento,
+                registroSelecionado.Categorias
             );
 
             return View(detalhesVM);

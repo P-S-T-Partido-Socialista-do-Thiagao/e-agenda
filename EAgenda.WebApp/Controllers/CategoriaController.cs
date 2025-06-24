@@ -140,19 +140,17 @@ public class CategoriaController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpGet("detalhes/{id:guid}")] 
+    [HttpGet("detalhes/{id:guid}")]
     public IActionResult Detalhes(Guid id)
     {
         var registroSelecionado = repositorioCategoria.SelecionarRegistroPorId(id);
-        var despesas = repositorioCategoria.SelecionarDespesasPorCategoria(id);
 
         var detalhesVM = new DetalhesCategoriaViewModel(
             id,
             registroSelecionado.Titulo,
-            despesas
-            );
+            registroSelecionado.Despesas
+        );
 
         return View(detalhesVM);
     }
 }
-

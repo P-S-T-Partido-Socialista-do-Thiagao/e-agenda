@@ -1,4 +1,5 @@
-﻿using EAgenda.Dominio.ModuloCategoria;
+﻿using eAgenda.WebApp.Extensions;
+using EAgenda.Dominio.ModuloCategoria;
 using EAgenda.Dominio.ModuloDespesa;
 using EAgenda.WebApp.Extensions;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -111,10 +112,8 @@ namespace EAgenda.WebApp.Models
         {
             Registros = new List<DetalhesDespesaViewModel>();
 
-            foreach (var despesa in despesas)
-            {
-                Registros.Add(despesa.ParaDetalhesVM());
-            }
+            foreach (var d in despesas)
+                Registros.Add(d.ParaDetalhesVM());
         }
     }
 
@@ -130,14 +129,25 @@ namespace EAgenda.WebApp.Models
 
         public DetalhesDespesaViewModel() { }
 
-        public DetalhesDespesaViewModel(Guid id, string descricao, DateTime dataOcorrencia, decimal valor, string formaPagamento, List<string> categorias)
+        public DetalhesDespesaViewModel(
+         Guid id,
+         string descricao,
+         DateTime dataOcorrencia,
+         decimal valor,
+         string formaPagamento,
+         List<Categoria> categorias
+     )
         {
             Id = id;
             Descricao = descricao;
-            DataOcorrencia = dataOcorrencia;
             Valor = valor;
+            DataOcorrencia = dataOcorrencia;
             FormaPagamento = formaPagamento;
-            Categorias = categorias;
+
+            Categorias = new List<string>();
+
+            foreach (var c in categorias)
+                Categorias.Add(c.Titulo);
         }
     }
 
