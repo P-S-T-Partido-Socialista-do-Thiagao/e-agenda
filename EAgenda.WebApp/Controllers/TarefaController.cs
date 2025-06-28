@@ -14,10 +14,10 @@ public class TarefaController : Controller
     private readonly ContextoDados contextoDados;
     private readonly IRepositorioTarefa repositorioTarefa;
 
-    public TarefaController()
+    public TarefaController(ContextoDados contextoDados, IRepositorioTarefa repositorioTarefa)
     {
-        contextoDados = new ContextoDados(true);
-        repositorioTarefa = new RepositorioTarefaEmArquivo(contextoDados);
+        this.contextoDados = contextoDados;
+        this.repositorioTarefa = repositorioTarefa;
     }
     public IActionResult Index()
     {

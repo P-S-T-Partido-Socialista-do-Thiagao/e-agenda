@@ -17,11 +17,11 @@ public class CompromissoController : Controller
     private readonly IRepositorioCompromisso repositorioCompromisso;
     private readonly IRepositorioContato repositorioContato;
 
-    public CompromissoController()
+    public CompromissoController(ContextoDados contextoDados, IRepositorioCompromisso repositorioCompromisso, IRepositorioContato repositorioContato)
     {
-        contextoDados = new ContextoDados(true);
-        repositorioCompromisso = new RepositorioCompromissoEmArquivo(contextoDados);
-        repositorioContato = new RepositorioContatoEmArquivo(contextoDados);
+        this.contextoDados = contextoDados;
+        this.repositorioCompromisso = repositorioCompromisso;
+        this.repositorioContato = repositorioContato;
     }
 
     public IActionResult Index()

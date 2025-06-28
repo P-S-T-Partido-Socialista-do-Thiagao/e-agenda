@@ -18,11 +18,11 @@ namespace EAgenda.WebApp.Controllers
         private readonly IRepositorioDespesa repositorioDespesa;
         private readonly IRepositorioCategoria repositorioCategoria;
 
-        public DespesaController()
+        public DespesaController(ContextoDados contextoDados, IRepositorioDespesa repositorioDespesa, IRepositorioCategoria repositorioCategoria)
         {
-            contextoDados = new ContextoDados(true);
-            repositorioDespesa = new RepositorioDespesaEmArquivo(contextoDados);
-            repositorioCategoria = new RepositorioCategoriaEmArquivo(contextoDados);
+            this.contextoDados = contextoDados;
+            this.repositorioDespesa = repositorioDespesa;
+            this.repositorioCategoria = repositorioCategoria;
         }
         public IActionResult Index()
         {

@@ -16,11 +16,10 @@ public class ContatoController : Controller
     private readonly IRepositorioContato repositorioContato;
     private readonly IRepositorioCompromisso repositorioCompromisso;
 
-    public ContatoController()
+    public ContatoController(ContextoDados contextoDados, IRepositorioContato repositorioContato)
     {
-        contextoDados = new ContextoDados(true);
-        repositorioContato = new RepositorioContatoEmArquivo(contextoDados);
-        repositorioCompromisso = new RepositorioCompromissoEmArquivo(contextoDados);
+        this.contextoDados = contextoDados;
+        this.repositorioContato = repositorioContato;
     }
 
     public IActionResult Index()

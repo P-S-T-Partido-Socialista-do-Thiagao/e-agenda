@@ -16,11 +16,11 @@ public class CategoriaController : Controller
     private readonly IRepositorioCategoria repositorioCategoria;
     private readonly IRepositorioDespesa repositorioDespesa;
 
-    public CategoriaController()
+    public CategoriaController(ContextoDados contextoDados, IRepositorioCategoria repositorioCategoria, IRepositorioDespesa repositorioDespesa)
     {
-        contextoDados = new ContextoDados(true);
-        repositorioCategoria = new RepositorioCategoriaEmArquivo(contextoDados);
-        repositorioDespesa = new RepositorioDespesaEmArquivo(contextoDados);
+        this.contextoDados = contextoDados;
+        this.repositorioCategoria = repositorioCategoria;
+        this.repositorioDespesa = repositorioDespesa;
     }
 
     public IActionResult Index()

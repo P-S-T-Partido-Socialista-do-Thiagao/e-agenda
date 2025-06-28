@@ -1,26 +1,39 @@
-using EAgenda.Dominio.ModuloItensTarefa;
+using EAgenda.Dominio.ModuloCategoria;
+using EAgenda.Dominio.ModuloCompromisso;
+using EAgenda.Dominio.ModuloContato;
+using EAgenda.Dominio.ModuloDespesa;
+using EAgenda.Dominio.ModuloTarefa;
 using EAgenda.Infraestrutura.Compartilhado;
-using EAgenda.Infraestrutura.ModuloItensTarefa;
+using EAgenda.Infraestrutura.ModuloCategoria;
+using EAgenda.Infraestrutura.ModuloCompromisso;
+using EAgenda.Infraestrutura.ModuloContato;
+using EAgenda.Infraestrutura.ModuloDespesa;
+using EAgenda.Infraestrutura.ModuloTarefa;
 
-namespace EAgenda.WebApp
+namespace EAgenda.WebApp;
+
+public class Program
 {
-    public class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
-            
-            builder.Services.AddControllersWithViews();
+        var builder = WebApplication.CreateBuilder(args);
 
-            var app = builder.Build();
+        builder.Services.AddControllersWithViews();
+        builder.Services.AddScoped<ContextoDados>((_) => new ContextoDados(true));
+        builder.Services.AddScoped<IRepositorioContato, RepositorioContatoEmArquivo>();
+        builder.Services.AddScoped<IRepositorioCompromisso, RepositorioCompromissoEmArquivo>();
+        builder.Services.AddScoped<IRepositorioCategoria, RepositorioCategoriaEmArquivo>();
+        builder.Services.AddScoped<IRepositorioDespesa, RepositorioDespesaEmArquivo>();
+        builder.Services.AddScoped<IRepositorioTarefa, RepositorioTarefaEmArquivo>();
 
-            app.UseAntiforgery();
-            app.UseStaticFiles();
-            app.UseRouting();
-            app.MapDefaultControllerRoute();
+        var app = builder.Build();
 
-            app.Run();
+        app.UseAntiforgery();
+        app.UseStaticFiles();
+        app.UseRouting();
+        app.MapDefaultControllerRoute();
 
-        }
+        app.Run();
+
     }
 }
