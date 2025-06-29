@@ -1,60 +1,43 @@
-﻿@using EAgenda.WebApp.Models;
-@model CadastrarTarefaViewModel;
+﻿@using eAgenda.Dominio.ModuloTarefa
+@using eAgenda.WebApp.Models
+
+@model CadastrarTarefaViewModel
 
 @{
-    Layout = "_Layout";
     ViewBag.Titulo = "Cadastro de Tarefa";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card shadow-sm">
-                <div class="card-body p-4">
+<hr />
+<div class="row justify-content-center my-5">
+    <div class="col-md-8">
+        <div class="card rounded-4 border-0">
+            <div class="card-body p-md-5">
+                <form asp-action="Cadastrar">
+                    <h3>Cadastro de Tarefa</h3>
 
-                    <h2 class="card-title text-center mb-4">TAREFAS</h2>
-
-                    <form asp-controller="Tarefa" asp-action="Cadastrar" method="post">
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="Titulo" class="form-label">Titulo *</label>
-                                    <input asp-for="Titulo" class="form-control" />
-                                    <span asp-validation-for="Titulo" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="Prioridade" class="form-label">Prioridade *</label>
-                                    <select class="form-select" asp-for="Prioridade" aria-label="Selecionar prioridade">
-                                        <option selected></option>
-                                        <option value="Baixa">Baixa</option>
-                                        <option value="Normal">Normal</option>
-                                        <option value="Alta">Alta</option>
-                                    </select>
-                                    <span asp-validation-for="Prioridade" class="text-danger"></span>
-                                </div>
-                            </div>
+                    @if (ViewData.ModelState["CadastroUnico"]?.Errors.Count > 0)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show my-3" role="alert">
+                            @ViewData.ModelState["CadastroUnico"]!.Errors.First().ErrorMessage
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
+                    }
 
-                        <div class="mb-3">
-                            <label asp-for="DataCriacao" class="form-label">Data Criação*</label>
-                            <input asp-for="DataCriacao" type="date" class="form-control" />
-                            <span asp-validation-for="DataCriacao" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="DataConclusao" class="form-label">Data Conclusão</label>
-                            <input asp-for="DataConclusao" type="date" class="form-control" />
-                            <span asp-validation-for="DataConclusao" class="text-danger"></span>
-                        </div>
-                        <div class="mt-4 d-flex justify-content-end gap-2">
-                            <a href="/tarefas" class="btn btn-outline-secondary">Visualizar</a>
-                            <button type="submit" class="btn btn-primary">Cadastrar</button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="form-group d-grid gap-2 mt-3">
+                        <label asp-for="Titulo" class="control-label fs-5">Título:</label>
+                        <input asp-for="Titulo" class="form-control" />
+                        <span asp-validation-for="Titulo" class="text-danger"></span>
+                    </div>
+                    <div class="form-group d-grid gap-2 mt-3">
+                        <label asp-for="Prioridade" class="control-label fs-5">Prioridade:</label>
+                        <select asp-for="Prioridade" asp-items="@Html.GetEnumSelectList<PrioridadeTarefa>()" class="form-select"></select>
+                        <span asp-validation-for="Prioridade" class="text-danger"></span>
+                    </div>
+                    <div class="form-group d-flex align-items-center justify-content-end gap-3 mt-5">
+                        <a href="/tarefas">Voltar para a listagem</a>
+                        <button type="submit" class="btn btn-primary rounded-3 px-5">Confirmar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

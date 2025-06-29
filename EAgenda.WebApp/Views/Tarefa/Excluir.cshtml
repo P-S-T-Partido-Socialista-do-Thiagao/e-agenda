@@ -1,6 +1,6 @@
-﻿@using EAgenda.WebApp.Models;
-
+﻿@using eAgenda.WebApp.Models
 @model ExcluirTarefaViewModel
+
 @{
     Layout = "_Layout";
     ViewBag.Titulo = "Exclusão de Tarefa";
@@ -17,11 +17,11 @@
 
                 <form asp-action="Excluir" asp-route-id="@Model.Id">
                     <div class="form-group d-flex align-items-center justify-content-end gap-3">
-                        <a href="/tarefas" class="btn btn-outline-secondary">Voltar para a listagem</a>
+                        <a href="/tarefas">Voltar para a listagem</a>
                         <button type="submit" class="btn btn-danger px-5">Confirmar</button>
                     </div>
                 </form>
             </div>
         </div>
-    </div>  
+    </div>
 </div>

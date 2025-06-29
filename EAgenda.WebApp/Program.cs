@@ -1,14 +1,14 @@
+using eAgenda.Dominio.ModuloTarefa;
+using eAgenda.Infraestrutura.ModuloTarefa;
 using EAgenda.Dominio.ModuloCategoria;
 using EAgenda.Dominio.ModuloCompromisso;
 using EAgenda.Dominio.ModuloContato;
 using EAgenda.Dominio.ModuloDespesa;
-using EAgenda.Dominio.ModuloTarefa;
 using EAgenda.Infraestrutura.Compartilhado;
 using EAgenda.Infraestrutura.ModuloCategoria;
 using EAgenda.Infraestrutura.ModuloCompromisso;
 using EAgenda.Infraestrutura.ModuloContato;
 using EAgenda.Infraestrutura.ModuloDespesa;
-using EAgenda.Infraestrutura.ModuloTarefa;
 
 namespace EAgenda.WebApp;
 
