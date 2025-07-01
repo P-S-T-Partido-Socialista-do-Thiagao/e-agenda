@@ -8,8 +8,6 @@ public interface IRepositorio<T> where T : EntidadeBase<T>
 
     public bool ExcluirRegistro(Guid idRegistro);
 
-    public void ExcluirItem(T item);
-
     public List<T> SelecionarRegistros();
 
     public T SelecionarRegistroPorId(Guid idRegistro);
