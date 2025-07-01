@@ -6,6 +6,7 @@ using EAgenda.Infraestrutura.ModuloCategoria;
 using EAgenda.WebApp.Extensions;
 using EAgenda.Dominio.ModuloDespesa;
 using EAgenda.Infraestrutura.ModuloDespesa;
+using EAgenda.WebApp.ActionFilters;
 
 namespace EAgenda.WebApp.Controllers;
 
@@ -51,12 +52,9 @@ public class CategoriaController : Controller
             if (item.Titulo.Equals(cadastrarVM.Titulo))
             {
                 ModelState.AddModelError("CadastroUnico", "Já existe uma categoria registrada com esse título.");
-                break;
+                return View(cadastrarVM);
             }
         }
-
-        if (!ModelState.IsValid)
-            return View(cadastrarVM);
 
         var entidade = cadastrarVM.ParaEntidade();
 
