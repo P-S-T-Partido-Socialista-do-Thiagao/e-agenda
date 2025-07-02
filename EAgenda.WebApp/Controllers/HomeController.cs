@@ -1,12 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace EAgenda.WebApp.Controllers
+namespace EAgenda.WebApp.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    [HttpGet]
+    public IActionResult Index()
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        return View();
+    }
+
+    [HttpGet("erro")]
+    public IActionResult Erro()
+    {
+        return View();
     }
 }
