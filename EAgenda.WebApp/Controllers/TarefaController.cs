@@ -9,12 +9,10 @@ namespace eAgenda.WebApp.Controllers;
 [Route("tarefas")]
 public class TarefaController : Controller
 {
-    private readonly ContextoDados contextoDados;
     private readonly IRepositorioTarefa repositorioTarefa;
 
-    public TarefaController(ContextoDados contextoDados, IRepositorioTarefa repositorioTarefa)
+    public TarefaController(IRepositorioTarefa repositorioTarefa)
     {
-        this.contextoDados = contextoDados;
         this.repositorioTarefa = repositorioTarefa;
     }
 

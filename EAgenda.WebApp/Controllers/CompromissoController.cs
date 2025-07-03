@@ -13,13 +13,11 @@ namespace EAgenda.WebApp.Controllers;
 [Route("compromissos")]
 public class CompromissoController : Controller
 {
-    private readonly ContextoDados contextoDados;
     private readonly IRepositorioCompromisso repositorioCompromisso;
     private readonly IRepositorioContato repositorioContato;
 
-    public CompromissoController(ContextoDados contextoDados, IRepositorioCompromisso repositorioCompromisso, IRepositorioContato repositorioContato)
+    public CompromissoController(IRepositorioCompromisso repositorioCompromisso, IRepositorioContato repositorioContato)
     {
-        this.contextoDados = contextoDados;
         this.repositorioCompromisso = repositorioCompromisso;
         this.repositorioContato = repositorioContato;
     }

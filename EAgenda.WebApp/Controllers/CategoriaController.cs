@@ -13,17 +13,18 @@ namespace EAgenda.WebApp.Controllers;
 [Route("categorias")]
 public class CategoriaController : Controller
 {
-    private readonly ContextoDados contextoDados;
     private readonly IRepositorioCategoria repositorioCategoria;
     private readonly IRepositorioDespesa repositorioDespesa;
+    private readonly ILogger<CategoriaController> logger;
 
-    public CategoriaController(ContextoDados contextoDados, IRepositorioCategoria repositorioCategoria, IRepositorioDespesa repositorioDespesa)
+    public CategoriaController(IRepositorioCategoria repositorioCategoria, IRepositorioDespesa repositorioDespesa, ILogger<CategoriaController> logger)
     {
-        this.contextoDados = contextoDados;
         this.repositorioCategoria = repositorioCategoria;
         this.repositorioDespesa = repositorioDespesa;
+        this.logger = logger;
     }
 
+    [HttpGet]
     public IActionResult Index()
     {
         var registros = repositorioCategoria.SelecionarRegistros();

@@ -12,13 +12,11 @@ namespace EAgenda.WebApp.Controllers;
 [Route("contatos")]
 public class ContatoController : Controller
 {
-    private readonly ContextoDados contextoDados;
     private readonly IRepositorioContato repositorioContato;
     private readonly IRepositorioCompromisso repositorioCompromisso;
 
-    public ContatoController(ContextoDados contextoDados, IRepositorioContato repositorioContato)
+    public ContatoController(IRepositorioContato repositorioContato)
     {
-        this.contextoDados = contextoDados;
         this.repositorioContato = repositorioContato;
     }
 
