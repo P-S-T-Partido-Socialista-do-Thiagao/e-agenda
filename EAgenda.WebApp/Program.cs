@@ -32,7 +32,7 @@ public class Program
         builder.Services.AddScoped<IRepositorioCompromisso, RepositorioCompromissoEmArquivo>();
         builder.Services.AddScoped<IRepositorioCategoria, RepositorioCategoriaEmArquivo>();
         builder.Services.AddScoped<IRepositorioDespesa, RepositorioDespesaEmArquivo>();
-        builder.Services.AddScoped<IRepositorioTarefa, RepositorioTarefaEmArquivo>();
+        builder.Services.AddScoped<IRepositorioTarefa, RepositorioTarefa>();
 
         builder.Services.AddSerilogConfig(builder.Logging);
 

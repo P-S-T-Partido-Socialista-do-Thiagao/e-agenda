@@ -3,12 +3,12 @@ using EAgenda.Infraestrutura.Compartilhado;
 
 namespace eAgenda.Infraestrutura.ModuloTarefa;
 
-public class RepositorioTarefaEmArquivo : IRepositorioTarefa
+public class RepositorioTarefa : IRepositorioTarefa
 {
     private readonly ContextoDados contexto;
     private readonly List<Tarefa> registros;
 
-    public RepositorioTarefaEmArquivo(ContextoDados contexto)
+    public RepositorioTarefa(ContextoDados contexto)
     {
         this.contexto = contexto;
         this.registros = contexto.Tarefas;
@@ -30,6 +30,8 @@ public class RepositorioTarefaEmArquivo : IRepositorioTarefa
 
         tarefaSelecionada.AtualizarRegistro(tarefaEditada);
 
+        contexto.Salvar();
+
         return true;
     }
 
@@ -42,6 +44,25 @@ public class RepositorioTarefaEmArquivo : IRepositorioTarefa
 
         registros.Remove(registroSelecionado);
 
+        contexto.Salvar();
+
+        return true;
+    }
+
+    public void AdicionarItem(ItemTarefa item)
+    {
+        contexto.Salvar();
+    }
+
+    public bool AtualizarItem(ItemTarefa itemAtualizado)
+    {
+        contexto.Salvar();
+
+        return true;
+    }
+
+    public bool RemoverItem(ItemTarefa item)
+    {
         contexto.Salvar();
 
         return true;
