@@ -1,6 +1,7 @@
 using eAgenda.Dominio.ModuloTarefa;
 using eAgenda.Infraestrutura.ModuloTarefa;
-using eAgenda.Infraestrutura.SqlServer;
+using eAgenda.Infraestrutura.SqlServer.ModuloCompromisso;
+using eAgenda.Infraestrutura.SqlServer.ModuloContato;
 using EAgenda.Dominio.ModuloCategoria;
 using EAgenda.Dominio.ModuloCompromisso;
 using EAgenda.Dominio.ModuloContato;
@@ -29,7 +30,7 @@ public class Program
 
         builder.Services.AddScoped<ContextoDados>((_) => new ContextoDados(true));
         builder.Services.AddScoped<IRepositorioContato, RepositorioContatoEmSql>(); 
-        builder.Services.AddScoped<IRepositorioCompromisso, RepositorioCompromissoEmArquivo>();
+        builder.Services.AddScoped<IRepositorioCompromisso, RepositorioCompromissoEmSql>();
         builder.Services.AddScoped<IRepositorioCategoria, RepositorioCategoriaEmArquivo>();
         builder.Services.AddScoped<IRepositorioDespesa, RepositorioDespesaEmArquivo>();
         builder.Services.AddScoped<IRepositorioTarefa, RepositorioTarefa>();
