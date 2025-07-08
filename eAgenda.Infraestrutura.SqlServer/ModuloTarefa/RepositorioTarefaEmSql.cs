@@ -1,429 +1,348 @@
-﻿
-using eAgenda.Dominio.ModuloTarefa;
-using Microsoft.Data.SqlClient;
+﻿using eAgenda.Dominio.ModuloTarefa;
+using eAgenda.Infraestrutura.SqlServer.Compartilhado;
+using System.Data;
 
-namespace eAgenda.Infraestrutura.SqlServer.ModuloTarefa
+namespace eAgenda.Infraestrutura.SqlServer.ModuloTarefa;
+
+public class RepositorioTarefaEmSql : RepositorioBaseEmSql<Tarefa>, IRepositorioTarefa
 {
-    public class RepositorioTarefaEmSql : IRepositorioTarefa
+    public RepositorioTarefaEmSql(IDbConnection conexaoComBanco) : base(conexaoComBanco)
     {
-        private readonly string connectionString =
-        "Data Source=(LocalDB)\\MSSQLLocalDB;Initial Catalog=eAgendaDb;Integrated Security=True";
-        public void AdicionarItem(ItemTarefa item)
+    }
+
+    protected override string SqlInserir => @"
+        INSERT INTO [TBTAREFA] 
+        (
+            [ID],
+            [TITULO],
+            [DATACRIACAO],
+            [DATACONCLUSAO],
+            [PRIORIDADE],
+            [CONCLUIDA]
+        )
+        VALUES
+        (
+            @ID,
+            @TITULO,
+            @DATACRIACAO,
+            @DATACONCLUSAO,
+            @PRIORIDADE,
+            @CONCLUIDA
+        );";
+
+    protected override string SqlEditar => @"
+        UPDATE [TBTAREFA]	
+        SET
+            [TITULO] = @TITULO,
+            [DATACRIACAO] = @DATACRIACAO,
+            [DATACONCLUSAO] = @DATACONCLUSAO,
+            [PRIORIDADE] = @PRIORIDADE,
+            [CONCLUIDA] = @CONCLUIDA
+        WHERE
+            [ID] = @ID";
+
+    protected override string SqlExcluir => @"
+        DELETE FROM [TBTAREFA]
+        WHERE [ID] = @ID";
+
+    protected override string SqlSelecionarPorId => @"
+        SELECT
+            [ID],
+            [TITULO],
+            [PRIORIDADE],
+            [DATACRIACAO],
+            [DATACONCLUSAO],
+            [CONCLUIDA]
+        FROM 
+            [TBTAREFA]
+        WHERE 
+            [ID] = @ID";
+
+    protected override string SqlSelecionarTodos => @"
+        SELECT
+            [ID],
+            [TITULO],
+            [PRIORIDADE],
+            [DATACRIACAO],
+            [DATACONCLUSAO],
+            [CONCLUIDA]
+        FROM 
+            [TBTAREFA]";
+
+    protected string SqlSelecionarTarefasPendentes => @"
+        SELECT
+            [ID],
+            [TITULO],
+            [PRIORIDADE],
+            [DATACRIACAO],
+            [DATACONCLUSAO],
+            [CONCLUIDA]
+        FROM 
+            [TBTAREFA]
+        WHERE
+            [CONCLUIDA] = 0";
+
+    protected string SqlSelecionarTarefasConcluidas => @"
+        SELECT
+            [ID],
+            [TITULO],
+            [PRIORIDADE],
+            [DATACRIACAO],
+            [DATACONCLUSAO],
+            [CONCLUIDA]
+        FROM 
+            [TBTAREFA]
+        WHERE
+            [CONCLUIDA] = 1";
+
+    protected string SqlAdicionarItemTarefa => @"
+        INSERT INTO [TBITEMTAREFA]
+        (
+            [ID],
+            [TITULO],
+            [CONCLUIDO],
+            [TAREFA_ID]
+        )
+        VALUES
+        (
+            @ID,
+            @TITULO,
+            @CONCLUIDO,
+            @TAREFA_ID
+        );";
+
+    protected string SqlAtualizarItemTarefa => @"
+        UPDATE [TBITEMTAREFA]	
+        SET
+            [TITULO] = @TITULO,
+            [CONCLUIDO] = @CONCLUIDO,
+            [TAREFA_ID] = @TAREFA_ID
+        WHERE
+            [ID] = @ID";
+
+    protected string SqlRemoverItemTarefa => @"
+        DELETE FROM [TBITEMTAREFA]
+        WHERE [ID] = @ID";
+
+    protected string SqlSelecionarItensTarefa => @"
+        SELECT 
+            [ID],
+            [TITULO],
+            [CONCLUIDO],
+            [TAREFA_ID]
+        FROM 
+            [TBITEMTAREFA]
+        WHERE 
+            [TAREFA_ID] = @TAREFA_ID";
+
+    protected string SqlRemoverItensTarefa => @"
+        DELETE FROM [TBITEMTAREFA]
+        WHERE 
+            [TAREFA_ID] = @TAREFA_ID";
+
+    public void AdicionarItem(ItemTarefa item)
+    {
+        var comando = conexaoComBanco.CreateCommand();
+        comando.CommandText = SqlAdicionarItemTarefa;
+
+        ConfigurarParametrosItemTarefa(item, comando);
+
+        conexaoComBanco.Open();
+
+        comando.ExecuteNonQuery();
+
+        conexaoComBanco.Close();
+    }
+
+    public bool AtualizarItem(ItemTarefa itemAtualizado)
+    {
+        var comando = conexaoComBanco.CreateCommand();
+        comando.CommandText = SqlAtualizarItemTarefa;
+
+        ConfigurarParametrosItemTarefa(itemAtualizado, comando);
+
+        conexaoComBanco.Open();
+
+        var alteracoesRealizadas = comando.ExecuteNonQuery();
+
+        conexaoComBanco.Close();
+
+        return alteracoesRealizadas > 0;
+    }
+
+    public bool RemoverItem(ItemTarefa item)
+    {
+        var comando = conexaoComBanco.CreateCommand();
+        comando.CommandText = SqlRemoverItemTarefa;
+
+        comando.AdicionarParametro("ID", item.Id);
+
+        conexaoComBanco.Open();
+
+        var numeroRegistrosExcluidos = comando.ExecuteNonQuery();
+
+        conexaoComBanco.Close();
+
+        return numeroRegistrosExcluidos > 0;
+    }
+
+    public override bool ExcluirRegistro(Guid idTarefa)
+    {
+        RemoverItensTarefa(idTarefa);
+
+        return base.ExcluirRegistro(idTarefa);
+    }
+
+    public override List<Tarefa> SelecionarRegistros()
+    {
+        var registros = base.SelecionarRegistros();
+
+        foreach (var registro in registros)
+            CarregarItensTarefa(registro);
+
+        return registros;
+    }
+
+    public List<Tarefa> SelecionarTarefasPendentes()
+    {
+        var tarefasPendentes = new List<Tarefa>();
+
+        var comando = conexaoComBanco.CreateCommand();
+        comando.CommandText = SqlSelecionarTarefasPendentes;
+
+        conexaoComBanco.Open();
+
+        var leitorTarefa = comando.ExecuteReader();
+
+        while (leitorTarefa.Read())
         {
-            var sqlAdicionarItemTarefa =
-            @"INSERT INTO [TBITEMTAREFA]
-                    (
-                        [ID],
-                        [TITULO],
-                        [CONCLUIDO],
-                        [TAREFA_ID]
-                    )
-                    VALUES
-                    (
-                        @ID,
-                        @TITULO,
-                        @CONCLUIDO,
-                        @TAREFA_ID
-                    );";
+            var tarefa = ConverterParaRegistro(leitorTarefa);
 
-            SqlConnection conexaoComBanco = new SqlConnection(connectionString);
-
-            SqlCommand comandoInsercao = new SqlCommand(sqlAdicionarItemTarefa, conexaoComBanco);
-
-            ConfigurarParametrosItemTarefa(item, comandoInsercao);
-
-            conexaoComBanco.Open();
-
-            comandoInsercao.ExecuteScalar();
-
-            conexaoComBanco.Close();
+            tarefasPendentes.Add(tarefa);
         }
 
-        private void ConfigurarParametrosItemTarefa(ItemTarefa item, SqlCommand comandoInsercao)
+        conexaoComBanco.Close();
+
+        return tarefasPendentes;
+    }
+
+    public List<Tarefa> SelecionarTarefasConcluidas()
+    {
+        var tarefasConcluidas = new List<Tarefa>();
+
+        var comando = conexaoComBanco.CreateCommand();
+        comando.CommandText = SqlSelecionarTarefasConcluidas;
+
+        conexaoComBanco.Open();
+
+        var leitorTarefa = comando.ExecuteReader();
+
+
+        while (leitorTarefa.Read())
         {
-            comandoInsercao.Parameters.AddWithValue("ID", item.Id);
-            comandoInsercao.Parameters.AddWithValue("TITULO", item.Titulo);
-            comandoInsercao.Parameters.AddWithValue("CONCLUIDO", item.Concluido);
-            comandoInsercao.Parameters.AddWithValue("TAREFA_ID", item.Tarefa.Id);
+            var tarefa = ConverterParaRegistro(leitorTarefa);
+
+            tarefasConcluidas.Add(tarefa);
         }
 
-        public bool AtualizarItem(ItemTarefa itemAtualizado)
+        conexaoComBanco.Close();
+
+        return tarefasConcluidas;
+    }
+
+    public override Tarefa? SelecionarRegistroPorId(Guid idRegistro)
+    {
+        var registro = base.SelecionarRegistroPorId(idRegistro);
+
+        if (registro is not null)
+            CarregarItensTarefa(registro);
+
+        return registro;
+    }
+
+    protected override void ConfigurarParametrosRegistro(Tarefa tarefa, IDbCommand comando)
+    {
+        comando.AdicionarParametro("ID", tarefa.Id);
+        comando.AdicionarParametro("TITULO", tarefa.Titulo);
+        comando.AdicionarParametro("PRIORIDADE", tarefa.Prioridade);
+        comando.AdicionarParametro("DATACRIACAO", tarefa.DataCriacao);
+        comando.AdicionarParametro("DATACONCLUSAO", tarefa.DataConclusao ?? (object)DBNull.Value);
+        comando.AdicionarParametro("CONCLUIDA", tarefa.Concluida);
+    }
+
+    protected override Tarefa ConverterParaRegistro(IDataReader leitor)
+    {
+        DateTime? dataConclusao = null;
+
+        if (!leitor["DATACONCLUSAO"].Equals(DBNull.Value))
+            dataConclusao = Convert.ToDateTime(leitor["DATACONCLUSAO"]);
+
+        var tarefa = new Tarefa
         {
-            var sqlEditar =
-            @"UPDATE [TBITEMTAREFA]
-            SET
-                [TITULO] = @TITUlO,
-                [CONCLUIDO] = @CONCLUIDO,
-                [TAREFA_ID] = @TAREFA_ID
-            WHERE
-                [ID] = @ID";
+            Id = Guid.Parse(leitor["ID"].ToString()!),
+            Titulo = Convert.ToString(leitor["TITULO"])!,
+            DataCriacao = Convert.ToDateTime(leitor["DATACRIACAO"]),
+            DataConclusao = dataConclusao,
+            Prioridade = (PrioridadeTarefa)leitor["PRIORIDADE"],
+            Concluida = Convert.ToBoolean(leitor["CONCLUIDA"])
+        };
 
-            SqlConnection conexaoComBanco = new SqlConnection(connectionString);
+        return tarefa;
+    }
 
-            SqlCommand comandoEdicao = new SqlCommand(sqlEditar, conexaoComBanco);
+    private void ConfigurarParametrosItemTarefa(ItemTarefa item, IDbCommand comando)
+    {
+        comando.AdicionarParametro("ID", item.Id);
+        comando.AdicionarParametro("TITULO", item.Titulo);
+        comando.AdicionarParametro("CONCLUIDO", item.Concluido);
+        comando.AdicionarParametro("TAREFA_ID", item.Tarefa.Id);
+    }
 
-            ConfigurarParametrosItemTarefa(itemAtualizado, comandoEdicao);
+    private ItemTarefa ConverterParaItemTarefa(IDataReader leitorItemTarefa, Tarefa tarefa)
+    {
+        var itemTarefa = new ItemTarefa
+        {
+            Id = Guid.Parse(leitorItemTarefa["ID"].ToString()!),
+            Titulo = Convert.ToString(leitorItemTarefa["TITULO"])!,
+            Concluido = Convert.ToBoolean(leitorItemTarefa["CONCLUIDO"]),
+            Tarefa = tarefa
+        };
 
-            conexaoComBanco.Open();
+        return itemTarefa;
+    }
 
-            var alteracoesRealizadas = comandoEdicao.ExecuteNonQuery();
+    private void CarregarItensTarefa(Tarefa tarefa)
+    {
+        var comando = conexaoComBanco.CreateCommand();
+        comando.CommandText = SqlSelecionarItensTarefa;
 
-            conexaoComBanco.Close();
+        comando.AdicionarParametro("TAREFA_ID", tarefa.Id);
 
-            return alteracoesRealizadas > 0;
+        conexaoComBanco.Open();
+
+        var leitorItemTarefa = comando.ExecuteReader();
+
+        while (leitorItemTarefa.Read())
+        {
+            var itemTarefa = ConverterParaItemTarefa(leitorItemTarefa, tarefa);
+
+            tarefa.AdicionarItem(itemTarefa);
         }
 
-        public void Cadastrar(Tarefa tarefa)
-        {
-            var sqlInserir =
-            @"INSERT  INTO [TAREFA]
-            (
-                [ID],
-                [TITULO],
-                [DATACRIACAO],
-                [DATACONCLUSAO],
-                [PRIORIDADE],
-                [CONCLUIDA]
-            )
-            VALUES
-            (
-                @ID,
-                @TITULO,
-                @DATACRIACAO,
-                @DATACONCLUSAO,
-                @PRIORIDADE,
-                @CONCLUIDA
-            )";
+        conexaoComBanco.Close();
+    }
 
-            SqlConnection conexaoComBanco = new SqlConnection(connectionString);
+    private void RemoverItensTarefa(Guid idTarefa)
+    {
+        var comando = conexaoComBanco.CreateCommand();
+        comando.CommandText = SqlRemoverItensTarefa;
 
-            SqlCommand comandoInsercao = new SqlCommand(sqlInserir, conexaoComBanco);
+        comando.AdicionarParametro("TAREFA_ID", idTarefa);
 
-            ConfigurarParametrosTarefa(tarefa, comandoInsercao);
+        conexaoComBanco.Open();
 
-            conexaoComBanco.Open();
+        comando.ExecuteNonQuery();
 
-            comandoInsercao.ExecuteScalar();
-
-            conexaoComBanco.Close();
-
-        }
-
-        private void ConfigurarParametrosTarefa(Tarefa tarefa, SqlCommand comandoInsercao)
-        {
-            comandoInsercao.Parameters.AddWithValue("ID", tarefa.Id);
-            comandoInsercao.Parameters.AddWithValue("TITULO", tarefa.Titulo);
-            comandoInsercao.Parameters.AddWithValue("PRIORIDADE", tarefa.Prioridade);
-            comandoInsercao.Parameters.AddWithValue("DATACRIACAO", tarefa.DataCriacao);
-            comandoInsercao.Parameters.AddWithValue("DATACONCLUSAO", tarefa.DataConclusao ?? (object)DBNull.Value);
-            comandoInsercao.Parameters.AddWithValue("CONCLUIDA", tarefa.Concluida);
-        }
-
-        public bool Editar(Guid idTarefa, Tarefa tarefaEditada)
-        {
-            var sqlEditar =
-                @"UPDATE [TBTAREFA]
-                SET
-                    [TITULO] = @TITULO,
-                    [DATACRIACAO] = @DATACRIACAO,
-                    [DATACONCLUSAO] = @DATACONCLUSAO,
-                    [PRIORIDADE] = @PRIORIDADE,
-                    [CONCLUIDA] = @CONCLUIDA
-                WHERE
-                    [ID] = @ID";
-
-            SqlConnection conexaoComBanco = new SqlConnection(connectionString);
-
-            SqlCommand comandoEdicao = new SqlCommand(sqlEditar, conexaoComBanco);
-
-            tarefaEditada.Id = idTarefa;
-
-            ConfigurarParametrosTarefa(tarefaEditada, comandoEdicao);
-
-            conexaoComBanco.Open();
-
-            var alteracoesRealizadas = comandoEdicao.ExecuteNonQuery();
-
-            conexaoComBanco.Close();
-
-            return alteracoesRealizadas > 0;
-        }
-
-        public bool Excluir(Guid idTarefa)
-        {
-            var sqlExcluir =
-            @"DELETE FROM [TBTAREFA]
-            WHERE
-                [ID] == @ID";
-
-            ExcluirItensTarefa(idTarefa);
-
-            SqlConnection conexaoComBanco = new SqlConnection(connectionString);
-
-            SqlCommand comandoExclusao = new SqlCommand(sqlExcluir, conexaoComBanco);
-
-            comandoExclusao.Parameters.AddWithValue("ID", idTarefa);
-
-            conexaoComBanco.Open();
-
-            var numeroRegistrosExcluidos = comandoExclusao.ExecuteNonQuery();
-
-            conexaoComBanco.Close();
-
-            return numeroRegistrosExcluidos > 0;
-        }
-
-        private void ExcluirItensTarefa(Guid idTarefa)
-        {
-            var sqlExcluirItensTarefa =
-            @"DELETE FROM [TBITEMTAREFA]
-                WHERE
-                    [TAREFA_ID] = @TAREFA_ID
-";
-            SqlConnection conexaoComBanco = new SqlConnection(connectionString);
-
-            SqlCommand comandoExclusao = new SqlCommand(sqlExcluirItensTarefa, conexaoComBanco);
-
-            comandoExclusao.Parameters.AddWithValue("TAREFA_ID", idTarefa);
-
-            conexaoComBanco.Open();
-
-            comandoExclusao.ExecuteNonQuery();
-
-            conexaoComBanco.Close();
-        }
-
-        public bool RemoverItem(ItemTarefa item)
-        {
-            var sqlExcluir =
-            @"DELETE FROM [TBITEMTAREFA]
-            WHERE
-                [ID] = @ID";
-
-            SqlConnection conexaoComBanco = new SqlConnection(connectionString);
-
-            SqlCommand comandoExclusao = new SqlCommand(sqlExcluir, conexaoComBanco);
-
-            comandoExclusao.Parameters.AddWithValue("ID", item.Id);
-
-            conexaoComBanco.Open();
-
-            var numeroRegistrosExcluidos = comandoExclusao.ExecuteNonQuery();
-
-            conexaoComBanco.Close() ;
-
-            return numeroRegistrosExcluidos > 0;
-        }
-
-        public Tarefa? SelecionarTarefaPorId(Guid idTarefa)
-        {
-            var sqlSelecionarPorId =
-                @"SELECT
-                    [ID],
-                    [TITULO],
-                    [PRIORIDADE],
-                    [DATACRIACAO],
-                    [DATACONCLUSAO],
-                    [CONCLUIDA]
-                FROM
-                    [TBTAREFA]
-                WHERE
-                    [ID] = @ID";
-
-            SqlConnection conexaoComBanco = new SqlConnection(connectionString);
-
-            SqlCommand comandoSelecao = new SqlCommand(sqlSelecionarPorId, conexaoComBanco);
-
-            comandoSelecao.Parameters.AddWithValue("ID", idTarefa);
-
-            conexaoComBanco.Open();
-
-            SqlDataReader leitorTarefa = comandoSelecao.ExecuteReader();
-
-            Tarefa? tarefa = null;
-
-            if (leitorTarefa.Read())
-                tarefa = ConverterParaTarefa(leitorTarefa);
-
-            conexaoComBanco.Close();
-
-            return tarefa;
-        }
-
-        public List<Tarefa> SelecionarTarefas()
-        {
-            var sqlSelecionarTodos =
-                @"SELECT
-                    [ID],
-                    [TITULO],
-                    [PRIORIDADE],
-                    [DATACRIACAO],
-                    [DATACONCLUSAO],
-                    [CONCLUIDA]
-                FROM
-                [TBTAREFA]";
-
-            SqlConnection conexaoComBanco = new SqlConnection(connectionString);
-
-            SqlCommand comandoSelecao = new SqlCommand(sqlSelecionarTodos, conexaoComBanco);
-
-            conexaoComBanco.Open();
-
-            SqlDataReader leitorTarefa = comandoSelecao.ExecuteReader();
-
-            var tarefas = new List<Tarefa>();
-
-            while (leitorTarefa.Read())
-            {
-                var tarefa = ConverterParaTarefa(leitorTarefa);
-
-                tarefas.Add(tarefa);
-            }
-
-            conexaoComBanco.Close();
-
-            return tarefas;
-        }
-
-        private Tarefa ConverterParaTarefa(SqlDataReader leitorTarefa)
-        {
-            DateTime? dataConclusao = null;
-
-            if (!leitorTarefa["DATACONCLUSAO"].Equals(DBNull.Value))
-                dataConclusao = Convert.ToDateTime(leitorTarefa["DATACONCLUSAO"]);
-
-            var tarefa = new Tarefa
-            {
-                Id = Guid.Parse(leitorTarefa["ID"].ToString()),
-                Titulo = Convert.ToString(leitorTarefa["TITULO"]),
-                DataCriacao = Convert.ToDateTime(leitorTarefa["DATACRIACAO"]),
-                DataConclusao = dataConclusao,
-                Prioridade = (PrioridadeTarefa)leitorTarefa["PRIORIDADE"],
-                Concluida = Convert.ToBoolean(leitorTarefa["CONCLUIDA"])
-            };
-
-            CarregarItensTarefa(tarefa);
-
-            return tarefa;
-        }
-
-        private void CarregarItensTarefa(Tarefa tarefa)
-        {
-            var sqlSelecionarItensTarefa =
-                @"SELECT
-                    [ID],
-                    [TITULO],
-                    [CONCLUIDO],
-                    [TAREFA_ID]
-                FROM
-                    [TBITEMTAREFA]
-                WHERE
-                    [TAREFA_ID] = @TAREFA_ID";
-
-            SqlConnection conexaoComBanco = new SqlConnection(connectionString);
-
-            SqlCommand comandoSelecao =
-                new SqlCommand(sqlSelecionarItensTarefa, conexaoComBanco);
-
-            comandoSelecao.Parameters.AddWithValue("TAREFA_ID", tarefa.Id);
-
-            conexaoComBanco.Open();
-
-            SqlDataReader leitorItemTarefa = comandoSelecao.ExecuteReader();
-
-            while (leitorItemTarefa.Read())
-            {
-                var itemTarefa = ConverterParaItemTarefa(leitorItemTarefa, tarefa);
-
-                tarefa.AdicionarItem(itemTarefa);
-            }
-
-            conexaoComBanco.Close();
-        }
-
-        private ItemTarefa ConverterParaItemTarefa(SqlDataReader leitorItemTarefa, Tarefa tarefa)
-        {
-            var itemTarefa = new ItemTarefa
-            {
-                Id = Guid.Parse(leitorItemTarefa["ID"].ToString()),
-                Titulo = Convert.ToString(leitorItemTarefa["TITULO"]),
-                Concluido = Convert.ToBoolean(leitorItemTarefa["CONCLUIDO"]),
-                Tarefa = tarefa
-            };
-
-            return itemTarefa;
-        }
-
-        public List<Tarefa> SelecionarTarefasConcluidas()
-        {
-            var sqlSelecionarTarefasConcluidas =
-                @"SELECT
-                    [ID],
-                    [TITULO],
-                    [PRIORIDADE],
-                    [DATACRIACAO],
-                    [DATACONCLUSAO],
-                    [CONCLUIDA]
-                FROM
-                    [TBTAREFA]
-                WHERE
-                    [CONCLUIDA] = 1";
-
-            SqlConnection conexaoComBanco = new SqlConnection(connectionString);
-
-            SqlCommand comandoSelecao = new SqlCommand(sqlSelecionarTarefasConcluidas, conexaoComBanco);
-
-            conexaoComBanco.Open();
-
-            SqlDataReader leitorTarefa = comandoSelecao.ExecuteReader();
-
-            var tarefasConcluidas = new List<Tarefa>();
-
-            while (leitorTarefa.Read())
-            {
-                var tarefa = ConverterParaTarefa(leitorTarefa);
-                tarefasConcluidas.Add(tarefa);
-            }
-
-            conexaoComBanco.Close();
-
-            return tarefasConcluidas;
-        }
-
-        public List<Tarefa> SelecionarTarefasPendentes()
-        {
-            var sqlSelecionarTarefasPendentes =
-                 @"SELECT
-                    [ID],
-                    [TITULO],
-                    [PRIORIDADE],
-                    [DATACRIACAO],
-                    [DATACONCLUSAO],
-                    [CONCLUIDA]
-                FROM
-                    [TBTAREFA]
-                WHERE
-                    [CONCLUIDA] = 0";
-
-            SqlConnection conexaoComBanco = new SqlConnection(connectionString);
-
-            SqlCommand comandoSelecao = new SqlCommand(sqlSelecionarTarefasPendentes, conexaoComBanco);
-
-            conexaoComBanco.Open();
-
-            SqlDataReader leitorTarefa = comandoSelecao.ExecuteReader();
-
-            var tarefasPendentes = new List<Tarefa>();
-
-            while (leitorTarefa.Read())
-            {
-                var tarefa = ConverterParaTarefa(leitorTarefa);
-                tarefasPendentes.Add(tarefa);
-            }
-
-            conexaoComBanco.Close();
-
-            return tarefasPendentes;
-        }
+        conexaoComBanco.Close();
     }
 }

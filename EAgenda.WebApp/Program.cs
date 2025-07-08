@@ -11,7 +11,9 @@ using EAgenda.Dominio.ModuloContato;
 using EAgenda.Infraestrutura.Compartilhado;
 using EAgenda.WebApp.ActionFilters;
 using EAgenda.WebApp.DependencyInjection;
+using Microsoft.Data.SqlClient;
 using Serilog;
+using System.Data;
 
 namespace EAgenda.WebApp;
 
@@ -25,6 +27,14 @@ public class Program
         {
             options.Filters.Add<ValidarModeloAttribute>();
             options.Filters.Add<LogarAcaoAttribute>();
+        });
+
+        builder.Services.AddScoped<IDbConnection>(provider =>
+        {
+            const string connectionString =
+            "Data Source=(LocalDB)\\MSSQLLocalDB;Initial Catalog=eAgendaTest;Integrated Security=True";
+
+            return new SqlConnection(connectionString);
         });
 
         builder.Services.AddScoped<ContextoDados>((_) => new ContextoDados(true));
