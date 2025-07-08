@@ -1,25 +1,26 @@
 ﻿using EAgenda.Dominio.Compartilhado;
 using EAgenda.Dominio.ModuloDespesa;
 
-namespace EAgenda.Dominio.ModuloCategoria
+namespace eAgenda.Dominio.ModuloCategoria;
+
+public class Categoria : EntidadeBase<Categoria>
 {
-    public class Categoria : EntidadeBase<Categoria>
+    public string Titulo { get; set; }
+    public List<Despesa> Despesas { get; set; }
+
+    public Categoria()
     {
-        public string Titulo { get; set; }
-        public List<Despesa> Despesas { get; set; }
+        Despesas = new List<Despesa>();
+    }
 
-        public Categoria() { }
+    public Categoria(string titulo) : this()
+    {
+        Id = Guid.NewGuid();
+        Titulo = titulo;
+    }
 
-        public Categoria(string titulo, List<Despesa> despesas)
-        {
-            Id = Guid.NewGuid();
-            Titulo = titulo;
-            Despesas = despesas;
-        }
-
-        public override void AtualizarRegistro(Categoria registroEditado)
-        {
-            Titulo = registroEditado.Titulo;
-        }
+    public override void AtualizarRegistro(Categoria registroEditado)
+    {
+        Titulo = registroEditado.Titulo;
     }
 }
