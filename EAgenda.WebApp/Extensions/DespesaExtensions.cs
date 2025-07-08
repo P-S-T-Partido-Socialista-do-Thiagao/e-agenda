@@ -1,5 +1,5 @@
-﻿using EAgenda.Dominio.ModuloDespesa;
-using EAgenda.WebApp.Models;
+﻿using eAgenda.Dominio.ModuloDespesa;
+using eAgenda.WebApp.Models;
 
 namespace eAgenda.WebApp.Extensions;
 
@@ -9,8 +9,8 @@ public static class DespesaExtensions
     {
         return new Despesa(
             formularioVM.Descricao,
-            formularioVM.DataOcorrencia,
             formularioVM.Valor,
+            formularioVM.DataOcorrencia,
             formularioVM.FormaPagamento
         );
     }
@@ -20,8 +20,8 @@ public static class DespesaExtensions
         return new DetalhesDespesaViewModel(
                 despesa.Id,
                 despesa.Descricao,
-                despesa.DataOcorrencia,
                 despesa.Valor,
+                despesa.DataOcorrencia,
                 despesa.FormaPagamento,
                 despesa.Categorias
         );

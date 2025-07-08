@@ -1,4 +1,5 @@
 using eAgenda.Dominio.ModuloCategoria;
+using eAgenda.Dominio.ModuloDespesa;
 using eAgenda.Dominio.ModuloTarefa;
 using eAgenda.Infraestrutura.SqlServer.ModuloCategoria;
 using eAgenda.Infraestrutura.SqlServer.ModuloCompromisso;
@@ -7,7 +8,6 @@ using eAgenda.Infraestrutura.SqlServer.ModuloDespesa;
 using eAgenda.Infraestrutura.SqlServer.ModuloTarefa;
 using EAgenda.Dominio.ModuloCompromisso;
 using EAgenda.Dominio.ModuloContato;
-using EAgenda.Dominio.ModuloDespesa;
 using EAgenda.Infraestrutura.Compartilhado;
 using EAgenda.WebApp.ActionFilters;
 using EAgenda.WebApp.DependencyInjection;

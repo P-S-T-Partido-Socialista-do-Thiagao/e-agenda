@@ -1,165 +1,143 @@
-﻿using eAgenda.WebApp.Extensions;
-using EAgenda.Dominio.ModuloCategoria;
-using EAgenda.Dominio.ModuloDespesa;
-using EAgenda.WebApp.Extensions;
+﻿using eAgenda.Dominio.ModuloCategoria;
+using eAgenda.Dominio.ModuloDespesa;
+using eAgenda.WebApp.Extensions;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
-namespace EAgenda.WebApp.Models
+namespace eAgenda.WebApp.Models;
+
+public class FormularioDespesaViewModel
 {
-    public class FormularioDespesaViewModel
+    [Required(ErrorMessage = "O campo \"Descrição\" é obrigatório.")]
+    [MinLength(2, ErrorMessage = "O campo \"Descrição\" precisa conter ao menos 2 caracteres.")]
+    [MaxLength(100, ErrorMessage = "O campo \"Descrição\" precisa conter no máximo 100 caracteres.")]
+    public string? Descricao { get; set; }
+
+    [Required(ErrorMessage = "O campo \"Data de Ocorrência\" é obrigatório.")]
+    public DateTime DataOcorrencia { get; set; } = DateTime.Now;
+
+    [Required(ErrorMessage = "O campo \"Valor\" é obrigatório.")]
+    [Range(0, double.MaxValue, ErrorMessage = "O campo \"Valor\" deve conter um valor numérico positivo.")]
+    public decimal Valor { get; set; } = 0.0m;
+
+    [Required(ErrorMessage = "O campo \"Forma de Pagamento\" é obrigatório.")]
+    public string FormaPagamento { get; set; }
+
+    [Required(ErrorMessage = "O campo \"Categorias Selecionadas\" é necessita de ao menos um valor preenchido.")]
+    public List<Guid>? CategoriasSelecionadas { get; set; }
+
+    public List<SelectListItem>? CategoriasDisponiveis { get; set; }
+}
+
+public class CadastrarDespesaViewModel : FormularioDespesaViewModel
+{
+    public CadastrarDespesaViewModel()
     {
-        [Required(ErrorMessage = "O campo \"Descrição\" é obrigatório.")]
-        [MinLength(2, ErrorMessage = "O campo \"Descrição\" deve ter no mínimo 3 caracteres.")]
-        [MaxLength(100, ErrorMessage = "O campo \"Descrição\" deve ter no máximo 100 caracteres.")]
-        public string Descricao { get; set; }
-
-        [Required(ErrorMessage = "O campo \"Data De Ocorrencia\" é obrigatório.")]
-        public DateTime DataOcorrencia { get; set; } = DateTime.Now;
-
-        [Required(ErrorMessage = "O campo \"Valor\" é obrigatório.")]
-        [Range(0.01, double.MaxValue, ErrorMessage = "O campo \"Valor\" deve ser maior que zero.")]
-        public decimal Valor { get; set; }
-        public string? FormaPagamento { get; set; }
-        public List<SelectListItem>? CategoriasDisponiveis { get; set; }
-        public List<Guid>? Categorias { get; set; }
+        CategoriasSelecionadas = new List<Guid>();
+        CategoriasDisponiveis = new List<SelectListItem>();
     }
 
-    public class CadastrarDespesaViewModel : FormularioDespesaViewModel
+    public CadastrarDespesaViewModel(List<Categoria> categoriasDisponiveis) : this()
     {
-        public CadastrarDespesaViewModel()
+        foreach (var c in categoriasDisponiveis)
         {
-            Categorias = new List<Guid>();
-            CategoriasDisponiveis = new List<SelectListItem>();
-        }
+            var selecionarVM = new SelectListItem(c.Titulo, c.Id.ToString());
 
-        public CadastrarDespesaViewModel(List<Categoria> categorias) : this()
-        {
-
-            foreach (var categoria in categorias)
-            {
-                CategoriasDisponiveis.Add(new SelectListItem
-                {
-                    Value = categoria.Id.ToString(),
-                    Text = categoria.Titulo
-                });
-            }
-        }
-
-        public CadastrarDespesaViewModel(List<Categoria> categorias, string descricao, DateTime dataOcorrencia, decimal valor, string formaPagamento)
-        {
-            Descricao = descricao;
-            DataOcorrencia = dataOcorrencia;
-            Valor = valor;
-            FormaPagamento = formaPagamento;
-
-            CategoriasDisponiveis = new List<SelectListItem>();
-            foreach (var categoria in categorias)
-            {
-                CategoriasDisponiveis.Add(new SelectListItem
-                {
-                    Value = categoria.Id.ToString(),
-                    Text = categoria.Titulo
-                });
-            }
-        }
-
-    }
-
-    public class EditarDespesaViewModel : FormularioDespesaViewModel
-    {
-        [Required(ErrorMessage = "O campo \"Id\" é obrigatório.")]
-        public Guid Id { get; set; }
-        public EditarDespesaViewModel() { }
-        public EditarDespesaViewModel(Guid id, string descricao, DateTime dataOcorrencia, decimal valor, string formaPagamento, List<Categoria> categorias)
-        {
-            Id = id;
-            Descricao = descricao;
-            DataOcorrencia = dataOcorrencia;
-            Valor = valor;
-            FormaPagamento = formaPagamento;
-            CategoriasDisponiveis = new List<SelectListItem>();
-            foreach (var categoria in categorias)
-            {
-                CategoriasDisponiveis.Add(new SelectListItem
-                {
-                    Value = categoria.Id.ToString(),
-                    Text = categoria.Titulo
-                });
-            }
+            CategoriasDisponiveis?.Add(selecionarVM);
         }
     }
+}
 
-    public class ExcluirDespesaViewModel
+public class EditarDespesaViewModel : FormularioDespesaViewModel
+{
+    public Guid Id { get; set; }
+
+    public EditarDespesaViewModel()
     {
-        [Required(ErrorMessage = "O campo \"Id\" é obrigatório.")]
-        public Guid Id { get; set; }
-        [Required(ErrorMessage = "O campo \"Descrição\" é obrigatório.")]
-        public string Descricao { get; set; }
-        public ExcluirDespesaViewModel() { }
-        public ExcluirDespesaViewModel(Guid id, string descricao)
-        {
-            Id = id;
-            Descricao = descricao;
-        }
+        CategoriasSelecionadas = new List<Guid>();
+        CategoriasDisponiveis = new List<SelectListItem>();
     }
 
-    public class VisualizarDespesaViewModel
+    public EditarDespesaViewModel(
+        Guid id,
+        string descricao,
+        decimal valor,
+        DateTime dataOcorrencia,
+        string formaPagamento,
+        List<Categoria> categoriasSelecionadas,
+        List<Categoria> categoriasDisponiveis
+    ) : this()
     {
-        public List<DetalhesDespesaViewModel> Registros { get; set; }
+        Id = id;
+        Descricao = descricao;
+        DataOcorrencia = dataOcorrencia;
+        Valor = valor;
+        FormaPagamento = formaPagamento;
 
-        public VisualizarDespesaViewModel(List<Despesa> despesas)
+        foreach (var cs in categoriasSelecionadas)
+            CategoriasSelecionadas?.Add(cs.Id);
+
+        foreach (var cd in categoriasDisponiveis)
         {
-            Registros = new List<DetalhesDespesaViewModel>();
+            var selecionarVM = new SelectListItem(cd.Titulo, cd.Id.ToString());
 
-            foreach (var d in despesas)
-                Registros.Add(d.ParaDetalhesVM());
+            CategoriasDisponiveis?.Add(selecionarVM);
         }
     }
+}
 
-    public class DetalhesDespesaViewModel
+public class ExcluirDespesaViewModel
+{
+    public Guid Id { get; set; }
+    public string Descricao { get; set; }
+
+    public ExcluirDespesaViewModel(Guid id, string descricao)
     {
-        public Guid Id { get; set; }
-        public string Descricao { get; set; }
-        public DateTime DataOcorrencia { get; set; }
-        public decimal Valor { get; set; }
-        public string FormaPagamento { get; set; }
-        public DateTime DataCadastro { get; set; }
-        public List<string> Categorias { get; set; } = new List<string>();
-
-        public DetalhesDespesaViewModel() { }
-
-        public DetalhesDespesaViewModel(
-         Guid id,
-         string descricao,
-         DateTime dataOcorrencia,
-         decimal valor,
-         string formaPagamento,
-         List<Categoria> categorias
-     )
-        {
-            Id = id;
-            Descricao = descricao;
-            Valor = valor;
-            DataOcorrencia = dataOcorrencia;
-            FormaPagamento = formaPagamento;
-
-            Categorias = new List<string>();
-
-            foreach (var c in categorias)
-                Categorias.Add(c.Titulo);
-        }
+        Id = id;
+        Descricao = descricao;
     }
+}
 
-    public class SelecionarDespesaViewModel
+public class VisualizarDespesasViewModel
+{
+    public List<DetalhesDespesaViewModel> Registros { get; set; }
+
+    public VisualizarDespesasViewModel(List<Despesa> despesas)
     {
-        public Guid Id { get; set; }
-        public string Despesa { get; set; }
-        public SelecionarDespesaViewModel() { }
-        public SelecionarDespesaViewModel(Guid id, string despesa)
-        {
-            Id = id;
-            Despesa = despesa;
-        }
+        Registros = new List<DetalhesDespesaViewModel>();
+
+        foreach (var d in despesas)
+            Registros.Add(d.ParaDetalhesVM());
+    }
+}
+
+public class DetalhesDespesaViewModel
+{
+    public Guid Id { get; set; }
+    public string Descricao { get; set; }
+    public DateTime DataOcorrencia { get; set; }
+    public decimal Valor { get; set; }
+    public string FormaPagamento { get; set; }
+    public List<string> Categorias { get; set; }
+
+    public DetalhesDespesaViewModel(
+        Guid id,
+        string descricao,
+        decimal valor,
+        DateTime dataOcorrencia,
+        string formaPagamento,
+        List<Categoria> categorias
+    )
+    {
+        Id = id;
+        Descricao = descricao;
+        Valor = valor;
+        DataOcorrencia = dataOcorrencia;
+        FormaPagamento = formaPagamento;
+
+        Categorias = new List<string>();
+
+        foreach (var c in categorias)
+            Categorias.Add(c.Titulo);
     }
 }

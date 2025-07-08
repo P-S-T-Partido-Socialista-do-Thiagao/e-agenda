@@ -1,6 +1,6 @@
 ﻿using EAgenda.Dominio.Compartilhado;
 
-namespace EAgenda.Dominio.ModuloDespesa
+namespace eAgenda.Dominio.ModuloDespesa
 {
     public interface IRepositorioDespesa : IRepositorio<Despesa>;
 }

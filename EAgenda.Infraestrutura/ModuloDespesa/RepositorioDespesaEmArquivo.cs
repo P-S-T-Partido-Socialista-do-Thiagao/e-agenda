@@ -1,7 +1,7 @@
 ﻿using ControleDeBar.Infraestrura.Arquivos.Compartilhado;
 using EAgenda.Dominio.Compartilhado;
 using EAgenda.Dominio.ModuloContato;
-using EAgenda.Dominio.ModuloDespesa;
+using eAgenda.Dominio.ModuloDespesa;
 using EAgenda.Infraestrutura.Compartilhado;
 
 namespace EAgenda.Infraestrutura.ModuloDespesa;

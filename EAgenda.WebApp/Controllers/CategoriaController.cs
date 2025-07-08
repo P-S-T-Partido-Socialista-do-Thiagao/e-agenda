@@ -1,27 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using EAgenda.Dominio.ModuloCategoria;
+﻿using eAgenda.Dominio.ModuloCategoria;
+using eAgenda.WebApp.Extensions;
+using eAgenda.WebApp.Models;
 using EAgenda.WebApp.Models;
-using EAgenda.Infraestrutura.Compartilhado;
-using EAgenda.Infraestrutura.ModuloCategoria;
-using EAgenda.WebApp.Extensions;
-using EAgenda.Dominio.ModuloDespesa;
-using EAgenda.Infraestrutura.ModuloDespesa;
-using EAgenda.WebApp.ActionFilters;
+using Microsoft.AspNetCore.Mvc;
 
-namespace EAgenda.WebApp.Controllers;
+namespace eAgenda.WebApp.Controllers;
 
 [Route("categorias")]
 public class CategoriaController : Controller
 {
     private readonly IRepositorioCategoria repositorioCategoria;
-    private readonly IRepositorioDespesa repositorioDespesa;
-    private readonly ILogger<CategoriaController> logger;
 
-    public CategoriaController(IRepositorioCategoria repositorioCategoria, IRepositorioDespesa repositorioDespesa, ILogger<CategoriaController> logger)
+    public CategoriaController(IRepositorioCategoria repositorioCategoria)
     {
         this.repositorioCategoria = repositorioCategoria;
-        this.repositorioDespesa = repositorioDespesa;
-        this.logger = logger;
     }
 
     [HttpGet]
@@ -29,7 +21,7 @@ public class CategoriaController : Controller
     {
         var registros = repositorioCategoria.SelecionarRegistros();
 
-        var visualizarVM = new VisualizarCategoriaViewModel(registros);
+        var visualizarVM = new VisualizarCategoriasViewModel(registros);
 
         return View(visualizarVM);
     }
@@ -52,7 +44,7 @@ public class CategoriaController : Controller
         {
             if (item.Titulo.Equals(cadastrarVM.Titulo))
             {
-                ModelState.AddModelError("CadastroUnico", "Já existe uma categoria registrada com esse título.");
+                ModelState.AddModelError("CadastroUnico", "Já existe uma categoria registrada com este título.");
                 return View(cadastrarVM);
             }
         }
@@ -62,7 +54,6 @@ public class CategoriaController : Controller
         repositorioCategoria.CadastrarRegistro(entidade);
 
         return RedirectToAction(nameof(Index));
-
     }
 
     [HttpGet("editar/{id:guid}")]
@@ -72,9 +63,8 @@ public class CategoriaController : Controller
 
         var editarVM = new EditarCategoriaViewModel(
             id,
-            registroSelecionado.Titulo,
-            registroSelecionado.Despesas
-            );
+            registroSelecionado.Titulo
+        );
 
         return View(editarVM);
     }
@@ -89,13 +79,11 @@ public class CategoriaController : Controller
         {
             if (!item.Id.Equals(id) && item.Titulo.Equals(editarVM.Titulo))
             {
-                ModelState.AddModelError("CadastroUnico", "Já existe uma categoria registrada com este título");
-                break;
+                ModelState.AddModelError("CadastroUnico", "Já existe uma categoria registrada com este título.");
+                return View(editarVM);
+
             }
         }
-
-        if (!ModelState.IsValid)
-            return View(editarVM);
 
         var entidadeEditada = editarVM.ParaEntidade();
 
@@ -115,27 +103,11 @@ public class CategoriaController : Controller
     }
 
     [HttpPost("excluir/{id:guid}")]
+    [ValidateAntiForgeryToken]
     public IActionResult ExcluirConfirmado(Guid id)
     {
-        var despesas = repositorioDespesa.SelecionarRegistros();
-
-        foreach (var despesa in despesas)
-        {
-            if (despesa.Categorias.Any(c => c.Id == id))
-            {
-                ModelState.AddModelError("DespesaVinculada", "Não é possível excluir a categoria, pois ela está associada a uma despesa.");
-                break;
-            }
-        }
-
-        if (!ModelState.IsValid)
-        {
-            var registroSelecionado = repositorioCategoria.SelecionarRegistroPorId(id);
-            var excluirVM = new ExcluirCategoriaViewModel(registroSelecionado.Id, registroSelecionado.Titulo);
-            return View("Excluir", excluirVM);
-        }
-
         repositorioCategoria.ExcluirRegistro(id);
+
         return RedirectToAction(nameof(Index));
     }
 

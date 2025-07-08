@@ -1,23 +1,22 @@
-﻿using EAgenda.Dominio.ModuloCategoria;
-using EAgenda.WebApp.Models;
-using static EAgenda.WebApp.Models.VisualizarCategoriaViewModel;
+﻿using eAgenda.Dominio.ModuloCategoria;
+using eAgenda.Dominio.ModuloDespesa;
+using eAgenda.WebApp.Models;
 
-namespace EAgenda.WebApp.Extensions;
+namespace eAgenda.WebApp.Extensions;
 
 public static class CategoriaExtensions
 {
     public static Categoria ParaEntidade(this FormularioCategoriaViewModel formularioVM)
     {
-        return new Categoria(formularioVM.Titulo, formularioVM.Despesas);
+        return new Categoria(formularioVM.Titulo);
     }
 
     public static DetalhesCategoriaViewModel ParaDetalhesVM(this Categoria categoria)
     {
-        return new DetalhesCategoriaViewModel
-        {
-            Id = categoria.Id,
-            Titulo = categoria.Titulo,
-            Despesas = categoria.Despesas,
-        };
+        return new DetalhesCategoriaViewModel(
+                categoria.Id,
+                categoria.Titulo,
+                categoria.Despesas
+        );
     }
 }

@@ -1,5 +1,4 @@
-﻿using EAgenda.Dominio.ModuloCategoria;
-using EAgenda.Dominio.ModuloCompromisso;
+﻿using EAgenda.Dominio.ModuloCompromisso;
 using EAgenda.Dominio.ModuloContato;
 using EAgenda.WebApp.Models;
 

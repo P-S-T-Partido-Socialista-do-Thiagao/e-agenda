@@ -1,11 +1,11 @@
-﻿using EAgenda.Dominio.ModuloCategoria;
-using EAgenda.Dominio.ModuloCompromisso;
+﻿using EAgenda.Dominio.ModuloCompromisso;
 using EAgenda.Dominio.ModuloContato;
-using EAgenda.Dominio.ModuloDespesa;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using static System.Net.Mime.MediaTypeNames;
 using eAgenda.Dominio.ModuloTarefa;
+using eAgenda.Dominio.ModuloCategoria;
+using eAgenda.Dominio.ModuloDespesa;
 
 namespace EAgenda.Infraestrutura.Compartilhado
 {

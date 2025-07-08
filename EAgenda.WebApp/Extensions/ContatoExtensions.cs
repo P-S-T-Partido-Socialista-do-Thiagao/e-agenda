@@ -1,5 +1,4 @@
-﻿using EAgenda.Dominio.ModuloCategoria;
-using EAgenda.Dominio.ModuloContato;
+﻿using EAgenda.Dominio.ModuloContato;
 using EAgenda.WebApp.Models;
 
 namespace EAgenda.WebApp.Extensions

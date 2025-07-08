@@ -1,26 +1,25 @@
-﻿using EAgenda.Dominio.ModuloCategoria;
-using EAgenda.Dominio.ModuloDespesa;
-using EAgenda.WebApp.Extensions;
+﻿using eAgenda.Dominio.ModuloCategoria;
+using eAgenda.Dominio.ModuloDespesa;
+using eAgenda.WebApp.Extensions;
 using System.ComponentModel.DataAnnotations;
-namespace EAgenda.WebApp.Models;
 
-public abstract class FormularioCategoriaViewModel
+namespace eAgenda.WebApp.Models;
+
+public class FormularioCategoriaViewModel
 {
     [Required(ErrorMessage = "O campo \"Título\" é obrigatório.")]
-    [MinLength(2, ErrorMessage = "O campo \"Título\" deve ter no mínimo 2 caracteres.")]
-    [MaxLength(100, ErrorMessage = "O campo \"Título\" deve ter no máximo 100 caracteres.")]
-    public string Titulo { get; set; }
-    public List<Despesa> Despesas { get; set; } = new List<Despesa>(); 
+    [MinLength(2, ErrorMessage = "O campo \"Título\" precisa conter ao menos 2 caracteres.")]
+    [MaxLength(100, ErrorMessage = "O campo \"Título\" precisa conter no máximo 100 caracteres.")]
+    public string? Titulo { get; set; }
 }
 
 public class CadastrarCategoriaViewModel : FormularioCategoriaViewModel
 {
     public CadastrarCategoriaViewModel() { }
 
-    public CadastrarCategoriaViewModel(string titulo, List<Despesa> despesas) : this()
+    public CadastrarCategoriaViewModel(string titulo) : this()
     {
         Titulo = titulo;
-        Despesas = despesas;
     }
 }
 
@@ -30,14 +29,12 @@ public class EditarCategoriaViewModel : FormularioCategoriaViewModel
 
     public EditarCategoriaViewModel() { }
 
-    public EditarCategoriaViewModel(Guid id, string titulo, List<Despesa> despesas)
+    public EditarCategoriaViewModel(Guid id, string titulo) : this()
     {
         Id = id;
         Titulo = titulo;
-        Despesas = despesas;
     }
 }
-
 
 public class ExcluirCategoriaViewModel
 {
@@ -51,50 +48,47 @@ public class ExcluirCategoriaViewModel
     }
 }
 
-public class VisualizarCategoriaViewModel
+public class VisualizarCategoriasViewModel
 {
-    public List<DetalhesCategoriaViewModel> Registros { get; } = new List<DetalhesCategoriaViewModel>();
+    public List<DetalhesCategoriaViewModel> Registros { get; set; }
 
-    public VisualizarCategoriaViewModel(List<Categoria> categorias)
+    public VisualizarCategoriasViewModel(List<Categoria> categorias)
     {
-        foreach (Categoria c in categorias)
-            Registros.Add(c.ParaDetalhesVM());
+        Registros = new List<DetalhesCategoriaViewModel>();
+
+        foreach (var g in categorias)
+            Registros.Add(g.ParaDetalhesVM());
     }
 }
 
-
-    public class DetalhesCategoriaViewModel
-    {
-        public Guid Id { get; set; }
-        public string Titulo { get; set; }
-        public List<Despesa> Despesas { get; set; }
-        public DetalhesCategoriaViewModel() { }
-        public DetalhesCategoriaViewModel(Guid id, string titulo, List<Despesa> despesas)
-        {
-            Id = id;
-            Titulo = titulo;
-            Despesas = despesas;
-        }
-    }
-
-    public class SelecionarCategoriaViewModel
-    {
-        public Guid Id { get; set; }
-        public string Titulo { get; set; }
-
-        public SelecionarCategoriaViewModel(Guid id, string titulo)
-        {
-            Id = id;
-            Titulo = titulo;
-        }
-    }
-
-public class DespesasCategoriaViewModel
+public class DetalhesCategoriaViewModel
 {
-    private List<Despesa> Despesas { get; set; } = new List<Despesa>();
+    public Guid Id { get; set; }
+    public string Titulo { get; set; }
+    public List<DetalhesDespesaViewModel> Despesas { get; set; }
+    public decimal TotalDespesas { get; set; }
 
-    public DespesasCategoriaViewModel(List<Despesa> despesas)
+    public DetalhesCategoriaViewModel(Guid id, string titulo, List<Despesa> despesas)
     {
-        Despesas = despesas;
+        Id = id;
+        Titulo = titulo;
+
+        Despesas = new List<DetalhesDespesaViewModel>();
+
+        foreach (var d in despesas)
+        {
+            TotalDespesas += d.Valor;
+
+            var detalhesDespesaVM = new DetalhesDespesaViewModel(
+                d.Id,
+                d.Descricao,
+                d.Valor,
+                d.DataOcorrencia,
+                d.FormaPagamento,
+                d.Categorias
+            );
+
+            Despesas.Add(detalhesDespesaVM);
+        }
     }
 }
