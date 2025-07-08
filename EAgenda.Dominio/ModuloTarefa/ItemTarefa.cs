@@ -6,6 +6,7 @@ public class ItemTarefa
     public string Titulo { get; set; }
     public bool Concluido { get; set; }
     public Tarefa Tarefa { get; set; }
+
     public ItemTarefa() { }
 
     public ItemTarefa(string titulo, Tarefa tarefa) : this()
