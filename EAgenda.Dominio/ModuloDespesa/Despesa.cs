@@ -1,5 +1,5 @@
-﻿using EAgenda.Dominio.Compartilhado;
-using EAgenda.Dominio.ModuloCategoria;
+﻿using eAgenda.Dominio.ModuloCategoria;
+using EAgenda.Dominio.Compartilhado;
 
 namespace EAgenda.Dominio.ModuloDespesa
 {
