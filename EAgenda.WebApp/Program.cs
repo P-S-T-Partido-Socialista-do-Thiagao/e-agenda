@@ -32,7 +32,9 @@ public class Program
         builder.Services.AddScoped<IDbConnection>(provider =>
         {
             const string connectionString =
-            "Data Source=(LocalDB)\\MSSQLLocalDB;Initial Catalog=eAgendaTest;Integrated Security=True";
+            "Server=tcp:e-agenda-victor.database.windows.net,1433;Initial Catalog=eAgendaDb;" +
+            "Persist Security Info=False;User ID=victor;Password=$lipKnot742617;MultipleActiveResultSets=False;" +
+            "Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
             return new SqlConnection(connectionString);
         });
