@@ -1,5 +1,4 @@
-﻿using ControleDeBar.Infraestrura.Arquivos.Compartilhado;
-using EAgenda.Dominio.Compartilhado;
+﻿using eAgenda.Infraestrura.Arquivos.Compartilhado;
 using EAgenda.Dominio.ModuloCompromisso;
 using EAgenda.Infraestrutura.Compartilhado;
 

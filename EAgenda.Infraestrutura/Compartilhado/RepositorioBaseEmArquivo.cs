@@ -1,7 +1,7 @@
 ﻿using EAgenda.Dominio.Compartilhado;
 using EAgenda.Infraestrutura.Compartilhado;
 
-namespace ControleDeBar.Infraestrura.Arquivos.Compartilhado;
+namespace eAgenda.Infraestrura.Arquivos.Compartilhado;
 
 public abstract class RepositorioBaseEmArquivo<T> where T : EntidadeBase<T>
 {

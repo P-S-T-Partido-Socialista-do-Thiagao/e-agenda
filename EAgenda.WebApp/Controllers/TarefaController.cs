@@ -25,7 +25,7 @@ public class TarefaController : Controller
         {
             case "pendentes": registros = repositorioTarefa.SelecionarTarefasPendentes(); break;
             case "concluidas": registros = repositorioTarefa.SelecionarTarefasConcluidas(); break;
-            default: registros = repositorioTarefa.SelecionarTarefas(); break;
+            default: registros = repositorioTarefa.SelecionarRegistros(); break;
         }
 
         var visualizarVM = new VisualizarTarefasViewModel(registros);
@@ -45,7 +45,7 @@ public class TarefaController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult Cadastrar(CadastrarTarefaViewModel cadastrarVM)
     {
-        var registros = repositorioTarefa.SelecionarTarefas();
+        var registros = repositorioTarefa.SelecionarRegistros();
 
         foreach (var item in registros)
         {
@@ -61,7 +61,7 @@ public class TarefaController : Controller
 
         var entidade = cadastrarVM.ParaEntidade();
 
-        repositorioTarefa.Cadastrar(entidade);
+        repositorioTarefa.CadastrarRegistro(entidade);
 
         return RedirectToAction(nameof(Index));
     }
@@ -69,7 +69,7 @@ public class TarefaController : Controller
     [HttpGet("editar/{id:guid}")]
     public IActionResult Editar(Guid id)
     {
-        var registroSelecionado = repositorioTarefa.SelecionarTarefaPorId(id);
+        var registroSelecionado = repositorioTarefa.SelecionarRegistroPorId(id);
 
         if (registroSelecionado is null)
             return RedirectToAction(nameof(Index));
@@ -87,7 +87,7 @@ public class TarefaController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult Editar(Guid id, EditarTarefaViewModel editarVM)
     {
-        var registros = repositorioTarefa.SelecionarTarefas();
+        var registros = repositorioTarefa.SelecionarRegistros();
 
         foreach (var item in registros)
         {
@@ -103,7 +103,7 @@ public class TarefaController : Controller
 
         var registroEditado = editarVM.ParaEntidade();
 
-        repositorioTarefa.Editar(id, registroEditado);
+        repositorioTarefa.EditarRegistro(id, registroEditado);
 
         return RedirectToAction(nameof(Index));
     }
@@ -111,7 +111,7 @@ public class TarefaController : Controller
     [HttpGet("excluir/{id:guid}")]
     public IActionResult Excluir(Guid id)
     {
-        var registroSelecionado = repositorioTarefa.SelecionarTarefaPorId(id);
+        var registroSelecionado = repositorioTarefa.SelecionarRegistroPorId(id);
 
         if (registroSelecionado is null)
             return RedirectToAction(nameof(Index));
@@ -124,7 +124,7 @@ public class TarefaController : Controller
     [HttpPost("excluir/{id:guid}")]
     public IActionResult ExcluirConfirmado(Guid id)
     {
-        repositorioTarefa.Excluir(id);
+        repositorioTarefa.ExcluirRegistro(id);
 
         return RedirectToAction(nameof(Index));
     }
@@ -132,7 +132,7 @@ public class TarefaController : Controller
     [HttpPost, Route("/tarefas/{id:guid}/alternar-status")]
     public IActionResult AlternarStatus(Guid id)
     {
-        var tarefaSelecionada = repositorioTarefa.SelecionarTarefaPorId(id);
+        var tarefaSelecionada = repositorioTarefa.SelecionarRegistroPorId(id);
 
         if (tarefaSelecionada is null)
             return RedirectToAction(nameof(Index));
@@ -142,7 +142,7 @@ public class TarefaController : Controller
         else
             tarefaSelecionada.Concluir();
 
-        repositorioTarefa.Editar(id, tarefaSelecionada);
+        repositorioTarefa.EditarRegistro(id, tarefaSelecionada);
 
         return RedirectToAction(nameof(Index));
     }
@@ -150,7 +150,7 @@ public class TarefaController : Controller
     [HttpGet, Route("/tarefas/{id:guid}/gerenciar-itens")]
     public IActionResult GerenciarItens(Guid id)
     {
-        var tarefaSelecionada = repositorioTarefa.SelecionarTarefaPorId(id);
+        var tarefaSelecionada = repositorioTarefa.SelecionarRegistroPorId(id);
 
         if (tarefaSelecionada is null)
             return RedirectToAction(nameof(Index));
@@ -163,7 +163,7 @@ public class TarefaController : Controller
     [HttpPost, Route("/tarefas/{id:guid}/adicionar-item")]
     public IActionResult AdicionarItem(Guid id, string tituloItem)
     {
-        var tarefaSelecionada = repositorioTarefa.SelecionarTarefaPorId(id);
+        var tarefaSelecionada = repositorioTarefa.SelecionarRegistroPorId(id);
 
         if (tarefaSelecionada is null)
             return RedirectToAction(nameof(Index));
@@ -180,7 +180,7 @@ public class TarefaController : Controller
     [HttpPost, Route("/tarefas/{idTarefa:guid}/alternar-status-item/{idItem:guid}")]
     public IActionResult AlternarStatusItem(Guid idTarefa, Guid idItem)
     {
-        var tarefaSelecionada = repositorioTarefa.SelecionarTarefaPorId(idTarefa);
+        var tarefaSelecionada = repositorioTarefa.SelecionarRegistroPorId(idTarefa);
 
         if (tarefaSelecionada is null)
             return RedirectToAction(nameof(Index));
@@ -205,7 +205,7 @@ public class TarefaController : Controller
     [HttpPost, Route("/tarefas/{idTarefa:guid}/remover-item/{idItem:guid}")]
     public IActionResult RemoverItem(Guid idTarefa, Guid idItem)
     {
-        var tarefaSelecionada = repositorioTarefa.SelecionarTarefaPorId(idTarefa);
+        var tarefaSelecionada = repositorioTarefa.SelecionarRegistroPorId(idTarefa);
 
         if (tarefaSelecionada is null)
             return RedirectToAction(nameof(Index));

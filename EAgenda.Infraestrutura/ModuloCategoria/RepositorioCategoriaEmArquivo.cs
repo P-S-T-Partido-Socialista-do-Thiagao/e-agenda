@@ -1,5 +1,5 @@
-﻿using ControleDeBar.Infraestrura.Arquivos.Compartilhado;
-using eAgenda.Dominio.ModuloCategoria;
+﻿using eAgenda.Dominio.ModuloCategoria;
+using eAgenda.Infraestrura.Arquivos.Compartilhado;
 using EAgenda.Infraestrutura.Compartilhado;
 
 namespace EAgenda.Infraestrutura.ModuloCategoria
