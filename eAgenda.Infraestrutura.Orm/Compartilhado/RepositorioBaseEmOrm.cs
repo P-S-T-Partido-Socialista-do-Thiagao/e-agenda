@@ -1,8 +1,7 @@
-﻿using eAgenda.Infraestrutura.Orm.Compartilhado;
-using EAgenda.Dominio.Compartilhado;
+﻿using EAgenda.Dominio.Compartilhado;
 using Microsoft.EntityFrameworkCore;
 
-namespace ControleDeBar.Infraestrutura.Orm.Compartilhado;
+namespace eAgenda.Infraestrutura.Orm.Compartilhado;
 
 public class RepositorioBaseEmOrm<T> where T : EntidadeBase<T>
 {

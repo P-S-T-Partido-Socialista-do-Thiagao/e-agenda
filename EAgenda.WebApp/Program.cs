@@ -8,12 +8,9 @@ using eAgenda.Infraestrutura.SqlServer.ModuloDespesa;
 using eAgenda.Infraestrutura.SqlServer.ModuloTarefa;
 using EAgenda.Dominio.ModuloCompromisso;
 using EAgenda.Dominio.ModuloContato;
-using EAgenda.Infraestrutura.Compartilhado;
 using EAgenda.WebApp.ActionFilters;
 using EAgenda.WebApp.DependencyInjection;
-using Microsoft.Data.SqlClient;
-using System.Data;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.EntityFrameworkCore;    
 
 namespace EAgenda.WebApp;
 
@@ -29,15 +26,15 @@ public class Program
             options.Filters.Add<LogarAcaoAttribute>();
         });
 
-        builder.Services.AddScoped<IDbConnection>(provider => 
+        /*
+        builder.Services.AddDbContext<eAgendaDbContext>(options =>
         {
-            const string connectionString =
-            @"Data Source = (LocalDB)\MSSQLLocalDB; Initial Catalog = eAgendaDb; Integrated Security = True";
-
-            return new SqlConnection(connectionString);
+            options.UseSqlServer(
+                @"Data Source = (LocalDB)\MSSQLLocalDB; Initial Catalog = eAgendaDb; Integrated Security = True"
+            );
         });
+        */
 
-        builder.Services.AddScoped<ContextoDados>((_) => new ContextoDados(true));
         builder.Services.AddScoped<IRepositorioContato, RepositorioContatoEmSql>(); 
         builder.Services.AddScoped<IRepositorioCompromisso, RepositorioCompromissoEmSql>();
         builder.Services.AddScoped<IRepositorioCategoria, RepositorioCategoriaEmSql>();
