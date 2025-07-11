@@ -12,8 +12,8 @@ using EAgenda.Infraestrutura.Compartilhado;
 using EAgenda.WebApp.ActionFilters;
 using EAgenda.WebApp.DependencyInjection;
 using Microsoft.Data.SqlClient;
-using Serilog;
 using System.Data;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EAgenda.WebApp;
 
@@ -29,12 +29,10 @@ public class Program
             options.Filters.Add<LogarAcaoAttribute>();
         });
 
-        builder.Services.AddScoped<IDbConnection>(provider =>
+        builder.Services.AddScoped<IDbConnection>(provider => 
         {
             const string connectionString =
-            "Server=tcp:e-agenda-victor.database.windows.net,1433;Initial Catalog=eAgendaDb;" +
-            "Persist Security Info=False;User ID=victor;Password=$lipKnot742617;MultipleActiveResultSets=False;" +
-            "Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            @"Data Source = (LocalDB)\MSSQLLocalDB; Initial Catalog = eAgendaDb; Integrated Security = True";
 
             return new SqlConnection(connectionString);
         });
