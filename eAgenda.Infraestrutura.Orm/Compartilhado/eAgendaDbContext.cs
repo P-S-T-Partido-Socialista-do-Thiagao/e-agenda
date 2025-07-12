@@ -6,6 +6,7 @@ namespace eAgenda.Infraestrutura.Orm.Compartilhado;
 public class eAgendaDbContext : DbContext
 {
     public DbSet<Contato> Contatos {  get; set; }
+    public DbSet<Compromisso> Compromissos { get; set; }
     public eAgendaDbContext(DbContextOptions options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

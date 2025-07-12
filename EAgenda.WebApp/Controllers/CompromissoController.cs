@@ -1,4 +1,5 @@
-﻿using EAgenda.Dominio.ModuloCompromisso;
+﻿using eAgenda.Infraestrutura.Orm.Compartilhado;
+using EAgenda.Dominio.ModuloCompromisso;
 using EAgenda.Dominio.ModuloContato;
 using EAgenda.Infraestrutura.Compartilhado;
 using EAgenda.Infraestrutura.ModuloCompromisso;
@@ -13,11 +14,13 @@ namespace EAgenda.WebApp.Controllers;
 [Route("compromissos")]
 public class CompromissoController : Controller
 {
+    private readonly eAgendaDbContext contexto;
     private readonly IRepositorioCompromisso repositorioCompromisso;
     private readonly IRepositorioContato repositorioContato;
 
-    public CompromissoController(IRepositorioCompromisso repositorioCompromisso, IRepositorioContato repositorioContato)
+    public CompromissoController(eAgendaDbContext contexto, IRepositorioCompromisso repositorioCompromisso, IRepositorioContato repositorioContato)
     {
+        this.contexto = contexto;
         this.repositorioCompromisso = repositorioCompromisso;
         this.repositorioContato = repositorioContato;
     }
@@ -48,14 +51,14 @@ public class CompromissoController : Controller
 
         if (cadastrarVM.TipoCompromisso.Equals("Remoto"))
         {
-            if(cadastrarVM.Link == null)
+            if (cadastrarVM.Link == null)
             {
                 ModelState.AddModelError("CadastroUnico", "É necessário fornecer um link caso o compromisso seja remoto");
             }
         }
         else if (cadastrarVM.TipoCompromisso.Equals("Presencial"))
         {
-            if(cadastrarVM.Local == null)
+            if (cadastrarVM.Local == null)
             {
                 ModelState.AddModelError("CadastroUnico", "É necessário fornecer um local caso o compromisso seja presencial");
             }
@@ -81,10 +84,23 @@ public class CompromissoController : Controller
 
         var entidade = cadastrarVM.ParaEntidade(contatosDisponiveis);
 
-        repositorioCompromisso.CadastrarRegistro(entidade);
+        var transacao = contexto.Database.BeginTransaction();
+
+        try
+        {
+            repositorioCompromisso.CadastrarRegistro(entidade);
+
+            contexto.SaveChanges();
+            transacao.Commit();
+        }
+        catch (Exception)
+        {
+            transacao.Rollback();
+
+            throw;
+        }
 
         return RedirectToAction(nameof(Index));
-
     }
 
     [HttpGet("editar/{id:guid}")]
@@ -95,13 +111,13 @@ public class CompromissoController : Controller
 
         var editarVM = new EditarCompromissoViewModel(
             id,
-            registroSelecionado.Assunto, 
-            registroSelecionado.DataDeOcorrencia, 
-            registroSelecionado.HoraDeInicio, 
-            registroSelecionado.HoraDeTermino, 
+            registroSelecionado.Assunto,
+            registroSelecionado.DataDeOcorrencia,
+            registroSelecionado.HoraDeInicio,
+            registroSelecionado.HoraDeTermino,
             registroSelecionado.TipoCompromisso,
-            registroSelecionado.Local, 
-            registroSelecionado.Link, 
+            registroSelecionado.Local,
+            registroSelecionado.Link,
             registroSelecionado.Contato.Id
         );
 
@@ -143,7 +159,21 @@ public class CompromissoController : Controller
 
         var entidadeEditada = editarVM.ParaEntidade(contatosDisponiveis);
 
-        repositorioCompromisso.EditarRegistro(id, entidadeEditada);
+        var transacao = contexto.Database.BeginTransaction();
+
+        try
+        {
+            repositorioCompromisso.EditarRegistro(id, entidadeEditada);
+
+            contexto.SaveChanges();
+            transacao.Commit();
+        }
+        catch (Exception)
+        {
+            transacao.Rollback();
+
+            throw;
+        }
 
         return RedirectToAction(nameof(Index));
     }
@@ -161,7 +191,20 @@ public class CompromissoController : Controller
     [HttpPost("excluir/{id:guid}")]
     public IActionResult ExcluirConfirmado(Guid id)
     {
-        repositorioCompromisso.ExcluirRegistro(id);
+        var transacao = contexto.Database.BeginTransaction();
+
+        try
+        {
+            repositorioCompromisso.ExcluirRegistro(id);
+
+            contexto.SaveChanges();
+            transacao.Commit();
+        }
+        catch (Exception)
+        {
+            transacao.Rollback();
+            throw;
+        }
 
         return RedirectToAction(nameof(Index));
     }

@@ -15,6 +15,7 @@ using EAgenda.WebApp.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using eAgenda.Infraestrutura.Orm.ModuloCompromisso;
 
 namespace EAgenda.WebApp;
 
@@ -47,7 +48,7 @@ public class Program
 
         // REGISTRA OS REPOSITÓRIOS
         builder.Services.AddScoped<IRepositorioContato, RepositorioContatoEmOrm>();
-        builder.Services.AddScoped<IRepositorioCompromisso, RepositorioCompromissoEmSql>();
+        builder.Services.AddScoped<IRepositorioCompromisso, RepositorioCompromissoEmOrm>();
         builder.Services.AddScoped<IRepositorioCategoria, RepositorioCategoriaEmSql>();
         builder.Services.AddScoped<IRepositorioDespesa, RepositorioDespesaEmSql>();
         builder.Services.AddScoped<IRepositorioTarefa, RepositorioTarefaEmSql>();
