@@ -1,4 +1,5 @@
-﻿using EAgenda.Dominio.ModuloContato;
+﻿using EAgenda.Dominio.ModuloCompromisso;
+using EAgenda.Dominio.ModuloContato;
 using Microsoft.EntityFrameworkCore;
 
 namespace eAgenda.Infraestrutura.Orm.Compartilhado;

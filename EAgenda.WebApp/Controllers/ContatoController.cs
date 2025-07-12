@@ -3,17 +3,21 @@ using Microsoft.AspNetCore.Mvc;
 using EAgenda.WebApp.Models;
 using EAgenda.WebApp.Extensions;
 using EAgenda.Dominio.ModuloCompromisso;
+using eAgenda.Infraestrutura.Orm.Compartilhado;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace EAgenda.WebApp.Controllers;
 
 [Route("contatos")]
 public class ContatoController : Controller
 {
+    private readonly eAgendaDbContext contexto;
     private readonly IRepositorioContato repositorioContato;
     private readonly IRepositorioCompromisso repositorioCompromisso;
 
-    public ContatoController(IRepositorioContato repositorioContato)
+    public ContatoController(eAgendaDbContext contexto, IRepositorioContato repositorioContato)
     {
+        this.contexto = contexto;
         this.repositorioContato = repositorioContato;
     }
 
@@ -59,7 +63,20 @@ public class ContatoController : Controller
 
         var entidade = cadastrarVM.ParaEntidade();
 
-        repositorioContato.CadastrarRegistro(entidade);
+        var transacao = contexto.Database.BeginTransaction();
+        try
+        {
+            repositorioContato.CadastrarRegistro(entidade);
+
+            contexto.SaveChanges();
+            transacao.Commit();
+        }
+        catch (Exception)
+        {
+            transacao.Rollback();
+
+            throw;
+        }
 
         return RedirectToAction(nameof(Index));
     }
@@ -107,7 +124,21 @@ public class ContatoController : Controller
 
         var entidadeEditada = editarVM.ParaEntidade();
 
-        repositorioContato.EditarRegistro(id, entidadeEditada);
+        var transacao = contexto.Database.BeginTransaction();
+
+        try
+        {
+            repositorioContato.EditarRegistro(id, entidadeEditada);
+
+            contexto.SaveChanges();
+            transacao.Commit();
+        }
+        catch (Exception)
+        {
+            transacao.Rollback();
+
+            throw;
+        }
 
         return RedirectToAction(nameof(Index));
     }
@@ -125,7 +156,7 @@ public class ContatoController : Controller
     [HttpPost("excluir/{id:guid}")]
     public IActionResult ExcluirConfirmado(Guid id)
     {
-        var compromissos = repositorioCompromisso.SelecionarRegistros();    
+        var compromissos = repositorioCompromisso.SelecionarRegistros();
 
         foreach (var compromisso in compromissos)
         {
@@ -143,7 +174,22 @@ public class ContatoController : Controller
             return View("Excluir", excluirVM);
         }
 
-        repositorioContato.ExcluirRegistro(id);
+        var transacao = contexto.Database.BeginTransaction();
+
+        try
+        {
+            repositorioContato.ExcluirRegistro(id);
+
+            contexto.SaveChanges();
+            transacao.Commit();    
+        }
+        catch (Exception)
+        {
+            transacao.Rollback();
+
+            throw;
+        }
+
         return RedirectToAction(nameof(Index));
     }
 
