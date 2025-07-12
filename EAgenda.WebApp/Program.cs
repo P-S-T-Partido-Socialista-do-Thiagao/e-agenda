@@ -1,6 +1,7 @@
 using eAgenda.Dominio.ModuloCategoria;
 using eAgenda.Dominio.ModuloDespesa;
 using eAgenda.Dominio.ModuloTarefa;
+using eAgenda.Infraestrutura.Orm.Compartilhado;
 using eAgenda.Infraestrutura.SqlServer.ModuloCategoria;
 using eAgenda.Infraestrutura.SqlServer.ModuloCompromisso;
 using eAgenda.Infraestrutura.SqlServer.ModuloContato;
@@ -26,14 +27,13 @@ public class Program
             options.Filters.Add<LogarAcaoAttribute>();
         });
 
-        /*
+        
         builder.Services.AddDbContext<eAgendaDbContext>(options =>
         {
             options.UseSqlServer(
                 @"Data Source = (LocalDB)\MSSQLLocalDB; Initial Catalog = eAgendaDb; Integrated Security = True"
             );
         });
-        */
 
         builder.Services.AddScoped<IRepositorioContato, RepositorioContatoEmSql>(); 
         builder.Services.AddScoped<IRepositorioCompromisso, RepositorioCompromissoEmSql>();
@@ -56,6 +56,5 @@ public class Program
         app.MapDefaultControllerRoute();
 
         app.Run();
-
     }
 }
