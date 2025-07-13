@@ -1,4 +1,5 @@
 ﻿using eAgenda.Dominio.ModuloTarefa;
+using eAgenda.Infraestrutura.Orm.Compartilhado;
 using eAgenda.WebApp.Extensions;
 using eAgenda.WebApp.Models;
 using EAgenda.Infraestrutura.Compartilhado;
@@ -9,10 +10,12 @@ namespace eAgenda.WebApp.Controllers;
 [Route("tarefas")]
 public class TarefaController : Controller
 {
+    private readonly eAgendaDbContext contexto;
     private readonly IRepositorioTarefa repositorioTarefa;
 
-    public TarefaController(IRepositorioTarefa repositorioTarefa)
+    public TarefaController(eAgendaDbContext contexto, IRepositorioTarefa repositorioTarefa)
     {
+        this.contexto = contexto;
         this.repositorioTarefa = repositorioTarefa;
     }
 
@@ -61,7 +64,21 @@ public class TarefaController : Controller
 
         var entidade = cadastrarVM.ParaEntidade();
 
-        repositorioTarefa.CadastrarRegistro(entidade);
+        var transacao = contexto.Database.BeginTransaction();
+
+        try
+        {
+            repositorioTarefa.CadastrarRegistro(entidade);
+
+            contexto.SaveChanges();
+            transacao.Commit();
+        }
+        catch (Exception)
+        {
+            transacao.Rollback();
+
+            throw;
+        }
 
         return RedirectToAction(nameof(Index));
     }
@@ -103,8 +120,21 @@ public class TarefaController : Controller
 
         var registroEditado = editarVM.ParaEntidade();
 
-        repositorioTarefa.EditarRegistro(id, registroEditado);
+        var transacao = contexto.Database.BeginTransaction();
 
+        try
+        {
+            repositorioTarefa.EditarRegistro(id, registroEditado);
+
+            contexto.SaveChanges();
+            transacao.Commit();
+        }
+        catch (Exception)
+        {
+            transacao.Rollback();
+
+            throw;
+        }
         return RedirectToAction(nameof(Index));
     }
 
@@ -123,8 +153,22 @@ public class TarefaController : Controller
 
     [HttpPost("excluir/{id:guid}")]
     public IActionResult ExcluirConfirmado(Guid id)
-    {
-        repositorioTarefa.ExcluirRegistro(id);
+    {    
+        var transacao = contexto.Database.BeginTransaction();
+
+        try
+        {
+            repositorioTarefa.ExcluirRegistro(id);
+
+            contexto.SaveChanges();
+            transacao.Commit();
+        }
+        catch (Exception)
+        {
+            transacao.Rollback();
+
+            throw;
+        }
 
         return RedirectToAction(nameof(Index));
     }

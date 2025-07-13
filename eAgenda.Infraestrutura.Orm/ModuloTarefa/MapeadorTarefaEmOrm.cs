@@ -10,5 +10,17 @@ public class MapeadorTarefaEmOrm : IEntityTypeConfiguration<Tarefa>
         builder.Property(x => x.Id)
             .ValueGeneratedNever()
             .IsRequired();
+
+        builder.Property(x => x.Prioridade)
+            .IsRequired();
+
+        builder.Property(x => x.DataCriacao)
+            .IsRequired();
+
+        builder.Property(x => x.DataConclusao)
+            .IsRequired(false);
+
+        builder.HasMany(x => x.Itens)
+            .WithOne(i => i.Tarefa);
     }
 }
