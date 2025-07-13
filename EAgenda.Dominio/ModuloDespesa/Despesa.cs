@@ -31,7 +31,7 @@ public class Despesa : EntidadeBase<Despesa>
         if (Categorias.Contains(categoria))
             return;
 
-        categoria.Despesas.Add(this);
+        //categoria.Despesas.Add(this);
         Categorias.Add(categoria);
     }
 
@@ -40,7 +40,7 @@ public class Despesa : EntidadeBase<Despesa>
         if (!Categorias.Contains(categoria))
             return;
 
-        categoria.Despesas.Remove(this);
+        //categoria.Despesas.Remove(this);
         Categorias.Remove(categoria);
     }
 

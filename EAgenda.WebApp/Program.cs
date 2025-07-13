@@ -3,9 +3,6 @@ using eAgenda.Dominio.ModuloDespesa;
 using eAgenda.Dominio.ModuloTarefa;
 using eAgenda.Infraestrutura.Orm.Compartilhado;
 using eAgenda.Infraestrutura.Orm.ModuloContato;
-using eAgenda.Infraestrutura.SqlServer.ModuloCategoria;
-using eAgenda.Infraestrutura.SqlServer.ModuloCompromisso;
-using eAgenda.Infraestrutura.SqlServer.ModuloContato;
 using eAgenda.Infraestrutura.SqlServer.ModuloDespesa;
 using eAgenda.Infraestrutura.SqlServer.ModuloTarefa;
 using EAgenda.Dominio.ModuloCompromisso;
@@ -16,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using eAgenda.Infraestrutura.Orm.ModuloCompromisso;
+using eAgenda.Infraestrutura.Orm.ModuloCategoria;
 
 namespace EAgenda.WebApp;
 
@@ -49,7 +47,7 @@ public class Program
         // REGISTRA OS REPOSITÓRIOS
         builder.Services.AddScoped<IRepositorioContato, RepositorioContatoEmOrm>();
         builder.Services.AddScoped<IRepositorioCompromisso, RepositorioCompromissoEmOrm>();
-        builder.Services.AddScoped<IRepositorioCategoria, RepositorioCategoriaEmSql>();
+        builder.Services.AddScoped<IRepositorioCategoria, RepositorioCategoriaEmOrm>();
         builder.Services.AddScoped<IRepositorioDespesa, RepositorioDespesaEmSql>();
         builder.Services.AddScoped<IRepositorioTarefa, RepositorioTarefaEmSql>();
 

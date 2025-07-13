@@ -1,4 +1,5 @@
 ﻿using eAgenda.Dominio.ModuloCategoria;
+using eAgenda.Infraestrutura.Orm.Compartilhado;
 using eAgenda.WebApp.Extensions;
 using eAgenda.WebApp.Models;
 using EAgenda.WebApp.Models;
@@ -9,10 +10,12 @@ namespace eAgenda.WebApp.Controllers;
 [Route("categorias")]
 public class CategoriaController : Controller
 {
+    private readonly eAgendaDbContext contexto;
     private readonly IRepositorioCategoria repositorioCategoria;
 
-    public CategoriaController(IRepositorioCategoria repositorioCategoria)
+    public CategoriaController(eAgendaDbContext contexto, IRepositorioCategoria repositorioCategoria)
     {
+        this.contexto = contexto;
         this.repositorioCategoria = repositorioCategoria;
     }
 
@@ -51,7 +54,21 @@ public class CategoriaController : Controller
 
         var entidade = cadastrarVM.ParaEntidade();
 
-        repositorioCategoria.CadastrarRegistro(entidade);
+        var transacao = contexto.Database.BeginTransaction();
+
+        try
+        {
+            repositorioCategoria.CadastrarRegistro(entidade);
+
+            contexto.SaveChanges();
+            transacao.Commit();
+        }
+        catch (Exception)
+        {
+            transacao.Rollback();
+
+            throw;
+        }
 
         return RedirectToAction(nameof(Index));
     }
@@ -87,7 +104,21 @@ public class CategoriaController : Controller
 
         var entidadeEditada = editarVM.ParaEntidade();
 
-        repositorioCategoria.EditarRegistro(id, entidadeEditada);
+        var transacao = contexto.Database.BeginTransaction();
+
+        try
+        {
+            repositorioCategoria.EditarRegistro(id, entidadeEditada);
+
+            contexto.SaveChanges();
+            transacao.Commit();
+        }
+        catch (Exception)
+        {
+            transacao.Rollback();
+
+            throw;
+        }
 
         return RedirectToAction(nameof(Index));
     }
@@ -106,10 +137,24 @@ public class CategoriaController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult ExcluirConfirmado(Guid id)
     {
-        repositorioCategoria.ExcluirRegistro(id);
+        var transacao = contexto.Database.BeginTransaction();
+        try
+        {
+            repositorioCategoria.ExcluirRegistro(id);
+
+            contexto.SaveChanges();
+            transacao.Commit();
+        }
+        catch (Exception)
+        {
+            transacao.Rollback();
+
+            throw;
+        }
 
         return RedirectToAction(nameof(Index));
     }
+
 
     [HttpGet("detalhes/{id:guid}")]
     public IActionResult Detalhes(Guid id)
