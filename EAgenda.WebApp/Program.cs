@@ -15,6 +15,7 @@ using System.Data;
 using eAgenda.Infraestrutura.Orm.ModuloCompromisso;
 using eAgenda.Infraestrutura.Orm.ModuloCategoria;
 using eAgenda.Infraestrutura.Orm.ModuloDespesa;
+using eAgenda.Infraestrutura.Orm.ModuloTarefa;
 
 namespace EAgenda.WebApp;
 
@@ -50,7 +51,7 @@ public class Program
         builder.Services.AddScoped<IRepositorioCompromisso, RepositorioCompromissoEmOrm>();
         builder.Services.AddScoped<IRepositorioCategoria, RepositorioCategoriaEmOrm>();
         builder.Services.AddScoped<IRepositorioDespesa, RepositorioDespesaEmOrm>();
-        builder.Services.AddScoped<IRepositorioTarefa, RepositorioTarefaEmSql>();
+        builder.Services.AddScoped<IRepositorioTarefa, RepositorioTarefaEmOrm>();
 
         builder.Services.AddSerilogConfig(builder.Logging);
 

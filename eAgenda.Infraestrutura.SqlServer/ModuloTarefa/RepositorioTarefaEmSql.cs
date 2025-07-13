@@ -295,7 +295,7 @@ public class RepositorioTarefaEmSql : RepositorioBaseEmSql<Tarefa>, IRepositorio
         comando.AdicionarParametro("ID", item.Id);
         comando.AdicionarParametro("TITULO", item.Titulo);
         comando.AdicionarParametro("CONCLUIDO", item.Concluido);
-        comando.AdicionarParametro("TAREFA_ID", item.Tarefa.Id);
+        //comando.AdicionarParametro("TAREFA_ID", item.Tarefa.Id);
     }
 
     private ItemTarefa ConverterParaItemTarefa(IDataReader leitorItemTarefa, Tarefa tarefa)
@@ -305,7 +305,7 @@ public class RepositorioTarefaEmSql : RepositorioBaseEmSql<Tarefa>, IRepositorio
             Id = Guid.Parse(leitorItemTarefa["ID"].ToString()!),
             Titulo = Convert.ToString(leitorItemTarefa["TITULO"])!,
             Concluido = Convert.ToBoolean(leitorItemTarefa["CONCLUIDO"]),
-            Tarefa = tarefa
+            //Tarefa = tarefa
         };
 
         return itemTarefa;

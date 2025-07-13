@@ -1,5 +1,6 @@
 ﻿using eAgenda.Dominio.ModuloCategoria;
 using eAgenda.Dominio.ModuloDespesa;
+using eAgenda.Dominio.ModuloTarefa;
 using EAgenda.Dominio.ModuloCompromisso;
 using EAgenda.Dominio.ModuloContato;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,8 @@ public class eAgendaDbContext : DbContext
     public DbSet<Contato> Contatos {  get; set; }
     public DbSet<Compromisso> Compromissos { get; set; }
     public DbSet<Categoria> Categorias { get; set; }
-    public DbSet<Despesa> Despesas { get; set; } 
+    public DbSet<Despesa> Despesas { get; set; }
+    public DbSet<ItemTarefa> ItensTarefa { get; set; }
     public eAgendaDbContext(DbContextOptions options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
