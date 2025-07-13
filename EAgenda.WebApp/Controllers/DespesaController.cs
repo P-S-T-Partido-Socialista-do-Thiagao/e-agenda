@@ -4,20 +4,25 @@ using eAgenda.WebApp.Models;
 using eAgenda.Dominio.ModuloDespesa;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using eAgenda.Infraestrutura.Orm.Compartilhado;
+using Microsoft.EntityFrameworkCore;
 
 namespace eAgenda.WebApp.Controllers;
 
 [Route("despesas")]
 public class DespesaController : Controller
 {
+    private readonly eAgendaDbContext contexto;
     private readonly IRepositorioDespesa repositorioDespesa;
     private readonly IRepositorioCategoria repositorioCategoria;
 
     public DespesaController(
+        eAgendaDbContext contexto,
         IRepositorioDespesa repositorioDespesa,
         IRepositorioCategoria repositorioCategoria
     )
     {
+        this.contexto = contexto;
         this.repositorioDespesa = repositorioDespesa;
         this.repositorioCategoria = repositorioCategoria;
     }
@@ -79,8 +84,22 @@ public class DespesaController : Controller
                 }
             }
         }
+        
+        var transacao = contexto.Database.BeginTransaction();
 
-        repositorioDespesa.CadastrarRegistro(despesa);
+        try
+        {
+            repositorioDespesa.CadastrarRegistro(despesa);
+
+            contexto.SaveChanges();
+            transacao.Commit();
+        }
+        catch (Exception)
+        {
+            transacao.Rollback();
+
+            throw;
+        }
 
         return RedirectToAction(nameof(Index));
     }
@@ -149,8 +168,22 @@ public class DespesaController : Controller
             }
         }
 
-        // Atualiza os dados da despesa selecionada
-        repositorioDespesa.EditarRegistro(id, despesaEditada);
+        var transacao = contexto.Database.BeginTransaction();
+
+        try
+        {
+            // Atualiza os dados da despesa selecionada
+            repositorioDespesa.EditarRegistro(id, despesaEditada);
+
+            contexto.SaveChanges();
+            transacao.Commit();
+        }
+        catch (Exception)
+        {
+            transacao.Rollback();
+
+            throw;
+        }
 
         return RedirectToAction(nameof(Index));
     }
@@ -174,8 +207,21 @@ public class DespesaController : Controller
         foreach (var cat in despesaSelecionada.Categorias.ToList())
             despesaSelecionada.RemoverCategoria(cat);
 
-        repositorioDespesa.ExcluirRegistro(id);
+        var transacao = contexto.Database.BeginTransaction();
 
+        try
+        {
+            repositorioDespesa.ExcluirRegistro(id);
+
+            contexto.SaveChanges();
+            transacao.Commit();
+        }
+        catch (Exception)
+        {
+            transacao.Rollback();
+
+            throw;
+        }
         return RedirectToAction(nameof(Index));
     }
 

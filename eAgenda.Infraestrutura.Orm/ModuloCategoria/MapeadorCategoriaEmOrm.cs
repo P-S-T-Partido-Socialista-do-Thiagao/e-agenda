@@ -13,5 +13,8 @@ public class MapeadorCategoriaEmOrm : IEntityTypeConfiguration<Categoria>
 
         builder.Property(x => x.Titulo)
             .IsRequired();
+
+        builder.HasMany(x => x.Despesas)
+            .WithMany(d => d.Categorias);
     }
 }

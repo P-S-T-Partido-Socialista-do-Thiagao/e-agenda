@@ -14,6 +14,7 @@ using Microsoft.Data.SqlClient;
 using System.Data;
 using eAgenda.Infraestrutura.Orm.ModuloCompromisso;
 using eAgenda.Infraestrutura.Orm.ModuloCategoria;
+using eAgenda.Infraestrutura.Orm.ModuloDespesa;
 
 namespace EAgenda.WebApp;
 
@@ -48,7 +49,7 @@ public class Program
         builder.Services.AddScoped<IRepositorioContato, RepositorioContatoEmOrm>();
         builder.Services.AddScoped<IRepositorioCompromisso, RepositorioCompromissoEmOrm>();
         builder.Services.AddScoped<IRepositorioCategoria, RepositorioCategoriaEmOrm>();
-        builder.Services.AddScoped<IRepositorioDespesa, RepositorioDespesaEmSql>();
+        builder.Services.AddScoped<IRepositorioDespesa, RepositorioDespesaEmOrm>();
         builder.Services.AddScoped<IRepositorioTarefa, RepositorioTarefaEmSql>();
 
         builder.Services.AddSerilogConfig(builder.Logging);
