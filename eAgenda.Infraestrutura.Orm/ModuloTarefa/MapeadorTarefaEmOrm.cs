@@ -22,5 +22,8 @@ public class MapeadorTarefaEmOrm : IEntityTypeConfiguration<Tarefa>
 
         builder.HasMany(x => x.Itens)
             .WithOne(i => i.Tarefa);
+
+        builder.Property(x => x.Concluida)
+            .IsRequired();
     }
 }

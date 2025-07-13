@@ -1,9 +1,11 @@
 ﻿using eAgenda.Dominio.ModuloTarefa;
 using eAgenda.Infraestrutura.Orm.Compartilhado;
+using Microsoft.EntityFrameworkCore;
 
 namespace eAgenda.Infraestrutura.Orm.ModuloTarefa;
 public class RepositorioTarefaEmOrm : RepositorioBaseEmOrm<Tarefa>, IRepositorioTarefa
 {
+    private readonly DbSet<Tarefa> tarefas;
     public RepositorioTarefaEmOrm(eAgendaDbContext contexto) : base(contexto)
     {
     }
@@ -25,7 +27,10 @@ public class RepositorioTarefaEmOrm : RepositorioBaseEmOrm<Tarefa>, IRepositorio
 
     public List<Tarefa> SelecionarTarefasConcluidas()
     {
-        throw new NotImplementedException();
+        return tarefas
+            .Where(x => x.Concluida)
+            .Include(x => x.Itens)
+            .ToList();
     }
 
     public List<Tarefa> SelecionarTarefasPendentes()
