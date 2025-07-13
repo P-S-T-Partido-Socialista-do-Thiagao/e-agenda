@@ -4,6 +4,7 @@ using eAgenda.WebApp.Extensions;
 using eAgenda.WebApp.Models;
 using EAgenda.Infraestrutura.Compartilhado;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
 
 namespace eAgenda.WebApp.Controllers;
 
@@ -186,7 +187,15 @@ public class TarefaController : Controller
         else
             tarefaSelecionada.Concluir();
 
-        repositorioTarefa.EditarRegistro(id, tarefaSelecionada);
+        var transacao = contexto.Database.BeginTransaction();
+
+        try
+        {
+            repositorioTarefa.EditarRegistro(id, tarefaSelecionada);
+            contexto.SaveChanges();
+            transacao.Commit();
+        }
+        catch(Exception) { transacao.Rollback(); throw; }
 
         return RedirectToAction(nameof(Index));
     }
@@ -212,10 +221,21 @@ public class TarefaController : Controller
         if (tarefaSelecionada is null)
             return RedirectToAction(nameof(Index));
 
-        var itemAdicionado = tarefaSelecionada.AdicionarItem(tituloItem);
+        var transacao = contexto.Database.BeginTransaction();
 
-        repositorioTarefa.AdicionarItem(itemAdicionado);
+        try
+        {
+            var itemAdicionado = tarefaSelecionada.AdicionarItem(tituloItem);
 
+            contexto.SaveChanges();
+            transacao.Commit();
+        }
+        catch (Exception)
+        {
+            transacao.Rollback();
+
+            throw;
+        }
         var gerenciarItensViewModel = new GerenciarItensViewModel(tarefaSelecionada);
 
         return View(nameof(GerenciarItens), gerenciarItensViewModel);
@@ -239,8 +259,21 @@ public class TarefaController : Controller
         else
             tarefaSelecionada.MarcarItemPendente(itemSelecionado);
 
-        repositorioTarefa.AtualizarItem(itemSelecionado);
+        var transacao = contexto.Database.BeginTransaction();
 
+        try
+        {
+            repositorioTarefa.AtualizarItem(itemSelecionado);
+
+            contexto.SaveChanges();
+            transacao.Commit();
+        }
+        catch (Exception)
+        {
+            transacao.Rollback();
+
+            throw;
+        }
         var gerenciarItensViewModel = new GerenciarItensViewModel(tarefaSelecionada);
 
         return View(nameof(GerenciarItens), gerenciarItensViewModel);
@@ -259,9 +292,22 @@ public class TarefaController : Controller
         if (itemSelecionado is null)
             return RedirectToAction(nameof(Index));
 
-        tarefaSelecionada.RemoverItem(itemSelecionado);
+        var transacao = contexto.Database.BeginTransaction();
 
-        repositorioTarefa.RemoverItem(itemSelecionado);
+        try
+        {
+            tarefaSelecionada.RemoverItem(itemSelecionado);
+            repositorioTarefa.RemoverItem(itemSelecionado);
+
+            contexto.SaveChanges();
+            transacao.Commit();
+        }
+        catch (Exception)
+        {
+            transacao.Rollback();
+
+            throw;
+        }
 
         var gerenciarItensViewModel = new GerenciarItensViewModel(tarefaSelecionada);
 
