@@ -1,19 +1,22 @@
 ﻿using eAgenda.Dominio.ModuloTarefa;
 using eAgenda.Infraestrutura.Orm.Compartilhado;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Headers;
 
 namespace eAgenda.Infraestrutura.Orm.ModuloTarefa;
 public class RepositorioTarefaEmOrm : RepositorioBaseEmOrm<Tarefa>, IRepositorioTarefa
 {
     private readonly DbSet<Tarefa> tarefas;
-    private readonly DbSet<ItemTarefa> itemsTarefa;
+    private readonly DbSet<ItemTarefa> itensTarefa;
     public RepositorioTarefaEmOrm(eAgendaDbContext contexto) : base(contexto)
     {
+        tarefas = contexto.Tarefas;
+        itensTarefa = contexto.ItensTarefa;
     }
 
     public void AdicionarItem(ItemTarefa item)
     {
-        itemsTarefa.Add(item);
+        itensTarefa.Add(item);
     }
 
     public bool AtualizarItem(ItemTarefa itemAtualizado)
@@ -23,14 +26,19 @@ public class RepositorioTarefaEmOrm : RepositorioBaseEmOrm<Tarefa>, IRepositorio
 
     public bool RemoverItem(ItemTarefa item)
     {
-        throw new NotImplementedException();
+        if (item == null)
+            return false;
+        else
+        {
+            itensTarefa.Remove(item);
+            return true;
+        }
     }
 
     public List<Tarefa> SelecionarTarefasConcluidas()
     {
         return tarefas
             .Where(x => x.Concluida)
-            .Include(x => x.Itens)
             .ToList();
     }
 
@@ -38,7 +46,6 @@ public class RepositorioTarefaEmOrm : RepositorioBaseEmOrm<Tarefa>, IRepositorio
     {
         return tarefas
             .Where(x => !x.Concluida)
-            .Include(x => x.Itens)
             .ToList();
     }
 }

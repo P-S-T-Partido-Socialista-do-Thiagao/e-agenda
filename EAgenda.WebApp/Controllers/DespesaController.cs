@@ -225,6 +225,7 @@ public class DespesaController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet("detalhes/{id:guid}")]
     public IActionResult Detalhes(Guid id)
     {
         var registroSelecionado = repositorioDespesa.SelecionarRegistroPorId(id);
