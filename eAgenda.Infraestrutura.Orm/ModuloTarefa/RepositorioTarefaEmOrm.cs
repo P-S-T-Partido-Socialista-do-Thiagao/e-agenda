@@ -48,4 +48,12 @@ public class RepositorioTarefaEmOrm : RepositorioBaseEmOrm<Tarefa>, IRepositorio
             .Where(x => !x.Concluida)
             .ToList();
     }
+
+    public override Tarefa? SelecionarRegistroPorId(Guid idRegistro)
+    {
+        return tarefas
+            .Include(t => t.Itens)
+            .FirstOrDefault(x => x.Id.Equals(idRegistro));
+
+    }
 }
